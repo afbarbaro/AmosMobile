@@ -8,14 +8,14 @@ import { StoryScreen, Story, UseCase } from "../../../storybook/views"
 import { Checkbox } from "./checkbox"
 import { Toggle } from "react-powerplug"
 
-declare let module
+declare let module: NodeModule
 
 const arrayStyle: ViewStyle[] = [{ paddingVertical: 40 }, { alignSelf: "flex-end" }]
 const arrayOutlineStyle: ViewStyle[] = [{ borderColor: "#b443c9" }, { borderWidth: 25 }]
 const arrayFillStyle: ViewStyle[] = [{ backgroundColor: "#55e0ff" }]
 
 storiesOf("Checkbox", module)
-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+  .addDecorator((fn) => <StoryScreen>{fn() as React.ReactNode}</StoryScreen>)
   .add("Behaviour", () => (
     <Story>
       <UseCase text="The Checkbox" usage="Use the checkbox to represent on/off states.">

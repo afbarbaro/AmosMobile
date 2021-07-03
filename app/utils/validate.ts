@@ -6,7 +6,12 @@ const Validate: any = ValidateJS.default ? ValidateJS.default : ValidateJS
 /**
  * Validates that 1 attribute doesn't appear in another's attributes content.
  */
-Validate.validators.excludes = function custom(value, options, key, attributes) {
+Validate.validators.excludes = function custom<T>(
+  value: T,
+  options: { attribute: string; message: string },
+  key: unknown,
+  attributes: Record<string, T[]>,
+): string | void {
   const list = attributes[options.attribute] || []
   if (value && list.includes(value)) {
     return options.message || `${value} is in the list`
@@ -16,7 +21,12 @@ Validate.validators.excludes = function custom(value, options, key, attributes) 
 /**
  * Validates that another attribute isn't true.
  */
-Validate.validators.tripped = function custom(value, options, key, attributes) {
+Validate.validators.tripped = function custom(
+  value: boolean,
+  options: { attribute: string; message: string },
+  key: unknown,
+  attributes: Record<string, boolean>,
+): string | void {
   if (value && attributes[options.attribute] === true) {
     return options.message || `${options.attribute} is true`
   }

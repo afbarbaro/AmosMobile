@@ -8,7 +8,7 @@ import { Text, FormRow } from "../"
 import { color } from "../../theme/color"
 import { ViewStyle } from "react-native"
 
-declare let module
+declare let module: NodeModule
 
 const TEXT_STYLE_OVERRIDE = {
   color: color.storybookTextColor,
@@ -16,7 +16,7 @@ const TEXT_STYLE_OVERRIDE = {
 const arrayStyle: ViewStyle[] = [{ borderWidth: 5 }, { borderColor: "#32cd32" }]
 
 storiesOf("FormRow", module)
-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+  .addDecorator((fn) => <StoryScreen>{fn() as React.ReactNode}</StoryScreen>)
   .add("Assembled", () => (
     <Story>
       <UseCase

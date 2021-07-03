@@ -8,7 +8,7 @@ import { StoryScreen, Story, UseCase } from "../../../storybook/views"
 import { color } from "../../theme"
 import { Text } from "./text"
 
-declare let module
+declare let module: NodeModule
 
 const VIEWSTYLE = {
   flex: 1,
@@ -17,7 +17,7 @@ const VIEWSTYLE = {
 const viewStyleArray: ViewStyle[] = [VIEWSTYLE, { backgroundColor: "#7fff00" }]
 
 storiesOf("Text", module)
-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+  .addDecorator((fn) => <StoryScreen>{fn() as React.ReactNode}</StoryScreen>)
   .add("Style Presets", () => (
     <Story>
       <UseCase text="default" usage="Used for normal body text.">

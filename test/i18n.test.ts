@@ -3,11 +3,11 @@ const { exec } = require("child_process")
 
 // Use this array for keys that for whatever reason aren't greppable so they
 // don't hold your test suite hostage by always failing.
-const EXCEPTIONS = [
+const EXCEPTIONS: string[] = [
   // "welcomeScreen.readyForLaunch",
 ]
 
-function iterate(obj, stack, array) {
+function iterate(obj: Record<string, any>, stack: string | any[], array: string[]) {
   for (const property in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, property)) {
       if (typeof obj[property] === "object") {
@@ -45,7 +45,7 @@ describe("i18n", () => {
     // Actual command output:
     // grep "Tx=\"\S*\"\|tx=\"\S*\"\|translate(\"\S*\"" -ohr './app' | grep -o "\".*\""
     const command = `grep "Tx=\\"\\S*\\"\\|tx=\\"\\S*\\"\\|translate(\\"\\S*\\"" -ohr './app' | grep -o "\\".*\\""`
-    exec(command, (_, stdout) => {
+    exec(command, (_: unknown, stdout: string) => {
       const allTranslationsDefined = iterate(en, "", [])
       const allTranslationsUsed = stdout.replace(/"/g, "").split("\n")
       allTranslationsUsed.splice(-1, 1)

@@ -23,8 +23,8 @@ export const presets = {
   stretch: {
     ...BASE,
     resizeMode: "stretch",
-    width: null, // Have to set these to null because android ¯\_(ツ)_/¯
-    height: null,
+    width: (null as unknown) as undefined, // Have to set these to null because android ¯\_(ツ)_/¯
+    height: (null as unknown) as undefined,
   } as ImageStyle,
 }
 

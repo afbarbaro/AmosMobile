@@ -1,4 +1,4 @@
-import React from "react"
+import React, { LegacyRef } from "react"
 import { StyleProp, TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native"
 import { color, spacing, typography } from "../../theme"
 import { translate, TxKeyPath } from "../../i18n"
@@ -59,7 +59,7 @@ export interface TextFieldProps extends TextInputProps {
    */
   preset?: keyof typeof PRESETS
 
-  forwardedRef?: any
+  forwardedRef?: LegacyRef<TextInput>
 }
 
 /**

@@ -13,7 +13,7 @@ export function Icon(props: IconProps) {
 
   return (
     <View style={containerStyle}>
-      <Image style={[ROOT, styleOverride]} source={icons[icon]} />
+      <Image style={[ROOT, styleOverride]} source={icon ? icons[icon] : undefined} />
     </View>
   )
 }

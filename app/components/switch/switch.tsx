@@ -45,7 +45,7 @@ const THUMB: ViewStyle = {
   elevation: 2,
 }
 
-const makeAnimatedValue = (switchOn) => new Animated.Value(switchOn ? 1 : 0)
+const makeAnimatedValue = (switchOn: boolean | undefined) => new Animated.Value(switchOn ? 1 : 0)
 
 export function Switch(props: SwitchProps) {
   const [timer] = React.useState<Animated.Value>(makeAnimatedValue(props.value))
@@ -63,11 +63,11 @@ export function Switch(props: SwitchProps) {
     [timer],
   )
 
-  const [previousValue, setPreviousValue] = React.useState<boolean>(props.value)
+  const [previousValue, setPreviousValue] = React.useState<boolean>(props.value || false)
   React.useEffect(() => {
     if (props.value !== previousValue) {
-      startAnimation(props.value)
-      setPreviousValue(props.value)
+      startAnimation(props.value || false)
+      setPreviousValue(props.value || false)
     }
   }, [props.value])
 

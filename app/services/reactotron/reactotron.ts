@@ -19,7 +19,7 @@ declare global {
 }
 
 /** Do Nothing. */
-const noop = () => undefined
+const noop = <T>(..._args: any[]) => (undefined as unknown) as T
 
 // in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
 if (__DEV__) {
@@ -88,7 +88,7 @@ export class Reactotron {
       rootStore = rootStore as RootStore // typescript hack
       this.rootStore = rootStore
 
-      const { initial, snapshots } = this.config.state
+      const { initial, snapshots } = this.config.state!
       const name = "ROOT STORE"
 
       // logging features
@@ -102,7 +102,7 @@ export class Reactotron {
         })
       }
 
-      console.tron.trackMstNode(rootStore)
+      console.tron.trackMstNode?.(rootStore)
     }
   }
 
@@ -121,7 +121,7 @@ export class Reactotron {
       // hookup middleware
       if (Platform.OS !== "web") {
         if (this.config.useAsyncStorage) {
-          Tron.setAsyncStorageHandler(AsyncStorage)
+          Tron.setAsyncStorageHandler?.(AsyncStorage)
         }
         Tron.useReactNative({
           asyncStorage: this.config.useAsyncStorage ? undefined : false,
@@ -147,7 +147,7 @@ export class Reactotron {
         description: "Resets the MST store",
         command: "resetStore",
         handler: () => {
-          console.tron.log("resetting store")
+          console.tron.log?.("resetting store")
           clear()
         },
       })
@@ -157,7 +157,7 @@ export class Reactotron {
         description: "Resets the navigation state",
         command: "resetNavigation",
         handler: () => {
-          console.tron.log("resetting navigation state")
+          console.tron.log?.("resetting navigation state")
           RootNavigation.resetRoot({ routes: [] })
         },
       })
@@ -167,14 +167,14 @@ export class Reactotron {
         description: "Goes back",
         command: "goBack",
         handler: () => {
-          console.tron.log("Going back")
+          console.tron.log?.("Going back")
           RootNavigation.goBack()
         },
       })
 
       // clear if we should
       if (this.config.clearOnLoad) {
-        Tron.clear()
+        Tron.clear?.()
       }
     }
   }

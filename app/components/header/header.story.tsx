@@ -5,7 +5,7 @@ import { StoryScreen, Story, UseCase } from "../../../storybook/views"
 import { Header } from "./header"
 import { color } from "../../theme"
 
-declare let module
+declare let module: NodeModule
 
 const VIEWSTYLE = {
   flex: 1,
@@ -13,7 +13,7 @@ const VIEWSTYLE = {
 }
 
 storiesOf("Header", module)
-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+  .addDecorator((fn) => <StoryScreen>{fn() as React.ReactNode}</StoryScreen>)
   .add("Behavior", () => (
     <Story>
       <UseCase noPad text="default" usage="The default usage">
