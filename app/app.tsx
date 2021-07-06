@@ -24,7 +24,7 @@ import {
   useNavigationPersistence,
 } from "./navigators"
 import { RootStore, RootStoreProvider, setupRootStore } from "./models"
-import { ToggleStorybook } from "../storybook/toggle-storybook"
+// import { ToggleStorybook } from "../storybook/toggle-storybook"
 import { NativeBaseProvider, extendTheme } from "native-base"
 
 // This puts screens in a native ViewController or Activity. If you want fully native
@@ -57,7 +57,7 @@ function App() {
 
   // Kick off initial async loading actions, like loading fonts and RootStore
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       await initFonts() // expo
       setupRootStore().then(setRootStore)
     })()
@@ -71,19 +71,19 @@ function App() {
 
   // otherwise, we're ready to render the app
   return (
-    <ToggleStorybook>
-      <RootStoreProvider value={rootStore}>
-        <NativeBaseProvider theme={theme}>
-          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <RootNavigator
-              ref={navigationRef}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-          </SafeAreaProvider>
-        </NativeBaseProvider>
-      </RootStoreProvider>
-    </ToggleStorybook>
+    // <ToggleStorybook>
+    <RootStoreProvider value={rootStore}>
+      <NativeBaseProvider theme={theme}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <RootNavigator
+            ref={navigationRef}
+            initialState={initialNavigationState}
+            onStateChange={onNavigationStateChange}
+          />
+        </SafeAreaProvider>
+      </NativeBaseProvider>
+    </RootStoreProvider>
+    // </ToggleStorybook>
   )
 }
 

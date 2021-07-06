@@ -1,10 +1,14 @@
-import React, { useEffect } from "react"
-import { FlatList, TextStyle, View, ViewStyle, ImageStyle } from "react-native"
+import { AntDesign } from '@expo/vector-icons'
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
-import { Header, Screen, Text, Wallpaper, AutoImage as Image } from "../../components"
-import { color, spacing } from "../../theme"
+import React, { useEffect } from "react"
+import { TextStyle, View, ViewStyle } from "react-native"
+import { VictoryChart, VictoryContainer, VictoryLine } from 'victory-native'
+import { Header, Screen, Wallpaper } from "../../components"
+import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
+import { SymbolSnapshot } from "../../models/symbol/symbol"
+import { color, spacing } from "../../theme"
 
 const FULL: ViewStyle = {
   flex: 1,
@@ -14,7 +18,6 @@ const CONTAINER: ViewStyle = {
 }
 const HEADER: TextStyle = {
   paddingBottom: spacing[5] - 1,
-  paddingHorizontal: spacing[4],
   paddingTop: spacing[3],
 }
 const HEADER_TITLE: TextStyle = {
@@ -24,41 +27,28 @@ const HEADER_TITLE: TextStyle = {
   lineHeight: 15,
   textAlign: "center",
 }
-const LIST_CONTAINER: ViewStyle = {
-  alignItems: "center",
-  flexDirection: "row",
-  padding: 10,
-}
-const IMAGE: ImageStyle = {
-  borderRadius: 35,
-  height: 65,
-  width: 65,
-}
-const LIST_TEXT: TextStyle = {
-  marginLeft: 10,
-}
-const FLAT_LIST: ViewStyle = {
-  paddingHorizontal: spacing[4],
-}
+const GRAPH = {
+  height: 'auto'
+} as const;
 
 export const DemoListScreen = observer(function DemoListScreen() {
   const navigation = useNavigation()
   const goBack = () => navigation.goBack()
 
-  const { characterStore } = useStores()
-  const { characters } = characterStore
+  const { symbolStore } = useStores()
 
-  useEffect(() => {
-    async function fetchData() {
-      await characterStore.getCharacters()
-    }
+  useEffect(() => { symbolStore.getSymbols() }, [])
+  const [filterText, setFilterText] = React.useState('');
 
-    fetchData()
-  }, [])
+  const symbolItems = React.useMemo(() => {
+    return symbolStore.symbols.filter(
+      (item) => item.name.toLowerCase().indexOf(filterText.toLowerCase()) > -1
+    );
+  }, [filterText]);
 
   return (
     <View testID="DemoListScreen" style={FULL}>
-      <Wallpaper />
+      {/* <Wallpaper /> */}
       <Screen style={CONTAINER} preset="fixed" backgroundColor={color.transparent}>
         <Header
           headerTx="demoListScreen.title"
@@ -67,19 +57,39 @@ export const DemoListScreen = observer(function DemoListScreen() {
           style={HEADER}
           titleStyle={HEADER_TITLE}
         />
-        <FlatList
-          contentContainerStyle={FLAT_LIST}
-          data={[...characters]}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <View style={LIST_CONTAINER}>
-              <Image source={{ uri: item.image }} style={IMAGE} />
-              <Text style={LIST_TEXT}>
-                {item.name} ({item.status})
-              </Text>
-            </View>
-          )}
+        <Select
+          bg={color.palette.orange}
+          ml={spacing[2]}
+          mr={spacing[2]}
+          zIndex={999}
+          options={symbolItems}
+          onChange={setFilterText}
+          onTouchStart={(event) => console.debug("event", event)}
+          onSelectedItemChange={(value) => console.info("Selected symbol ", value)}
+          getOptionKey={(item: SymbolSnapshot) => item.name}
+          getOptionLabel={(item: SymbolSnapshot) => item.name}
+          label="Choose symbol"
+          toggleIcon={(e: any) => {
+            const { isOpen }: { isOpen: boolean } = e;
+            return isOpen ? (
+              <AntDesign name="up" size={32} p={10} />
+            ) : (
+              <AntDesign name="down" size={32} p={10} />
+            );
+          }}
         />
+
+        <VictoryChart containerComponent={<VictoryContainer style={GRAPH} />}>
+          <VictoryLine
+            samples={100}
+            y={(d) => Math.sin(5 * Math.PI * d.x)}
+          />
+          <VictoryLine
+            samples={100}
+            style={{ data: { stroke: "red" } }}
+            y={(d) => Math.cos(5 * Math.PI * d.x)}
+          />
+        </VictoryChart>
       </Screen>
     </View>
   )
