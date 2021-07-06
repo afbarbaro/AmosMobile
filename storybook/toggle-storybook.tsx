@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, JSXElementConstructor } from "react"
 import { DevSettings } from "react-native"
 import { loadString, saveString } from "../app/utils/storage"
 
@@ -12,9 +12,9 @@ import { loadString, saveString } from "../app/utils/storage"
  * persists across reloads/restarts - this is handy when developing
  * new components in Storybook.
  */
-export function ToggleStorybook(props) {
+export function ToggleStorybook(props: any): any {
   const [showStorybook, setShowStorybook] = useState(false)
-  const [StorybookUIRoot, setStorybookUIRoot] = useState(null)
+  const [StorybookUIRoot, setStorybookUIRoot] = useState<JSXElementConstructor<unknown> | null>(null)
 
   useEffect(() => {
     if (__DEV__ && DevSettings) {

@@ -8,7 +8,7 @@ import { StoryScreen, Story, UseCase } from "../../../storybook/views"
 import { Toggle } from "react-powerplug"
 import { Switch } from "./switch"
 
-declare let module
+declare let module: NodeModule
 
 const styleArray: ViewStyle[] = [{ borderColor: "#686868" }]
 
@@ -49,7 +49,7 @@ const thumbOnStyle: ViewStyle[] = [
 ]
 
 storiesOf("Switch", module)
-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+  .addDecorator((fn) => <StoryScreen>{fn() as React.ReactNode}</StoryScreen>)
   .add("Behaviour", () => (
     <Story>
       <UseCase text="The Toggle Switch" usage="Use the switch to represent on/off states.">

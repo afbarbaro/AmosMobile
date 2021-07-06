@@ -9,5 +9,5 @@ import "./mock-reactotron"
 
 jest.useFakeTimers()
 declare global {
-  let __TEST__
+  let __TEST__: boolean
 }

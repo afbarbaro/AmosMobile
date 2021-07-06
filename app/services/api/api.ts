@@ -10,7 +10,7 @@ export class Api {
   /**
    * The underlying apisauce instance which performs the requests.
    */
-  apisauce: ApisauceInstance
+  apisauce!: ApisauceInstance
 
   /**
    * Configurable options.
@@ -57,7 +57,7 @@ export class Api {
       if (problem) return problem
     }
 
-    const convertUser = (raw) => {
+    const convertUser = (raw: Types.User) => {
       return {
         id: raw.id,
         name: raw.name,
