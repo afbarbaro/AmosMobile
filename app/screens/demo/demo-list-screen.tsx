@@ -62,6 +62,7 @@ export const DemoListScreen = observer(function DemoListScreen() {
           titleStyle={HEADER_TITLE}
         />
         <Select
+          placeholder='Type or pull down and choose'
           ml={spacing[2]}
           mr={spacing[2]}
           options={symbolItems}
@@ -69,7 +70,7 @@ export const DemoListScreen = observer(function DemoListScreen() {
           onSelectedItemChange={(value) => console.info("Selected symbol ", value)}
           getOptionKey={(item: SymbolSnapshot) => item.name}
           getOptionLabel={(item: SymbolSnapshot) => item.name}
-          label="Choose symbol"
+          label="Symbol"
           toggleIcon={(e: any) => {
             const { isOpen }: { isOpen: boolean } = e;
             return isOpen ? (

@@ -3,10 +3,11 @@ import { useButton } from '@react-native-aria/button';
 import { ComboBoxState, useComboBoxState } from '@react-stately/combobox';
 import { useComboBox } from '@react-native-aria/combobox';
 import { useListBox, useOption } from '@react-native-aria/listbox';
-import { ScrollView, findNodeHandle, Platform, TextInput } from 'react-native';
+import { ScrollView, findNodeHandle, Platform, TextInput, TextInputProps } from 'react-native';
 import { Item } from '@react-stately/collections';
-import { Box, Input, Text, Pressable, useThemeProps, themeTools } from 'native-base';
+import { Box, Input, Text, Pressable, useThemeProps, themeTools, IBoxProps, IInputProps } from 'native-base';
 import type { ITypeaheadProps, IComboBoxProps } from 'native-base/lib/typescript/components/composites/Typeahead/types';
+import { color } from '../../theme';
 
 // eslint-disable-next-line react/display-name
 export const Select = React.forwardRef(
@@ -20,7 +21,7 @@ export const Select = React.forwardRef(
       onChange,
       numberOfItems,
       ...rest
-    }: ITypeaheadProps,
+    }: ITypeaheadProps & Partial<Omit<TextInputProps, 'onFocus' | 'onBlur' | 'onChange'>>,
     ref?: any
   ) => {
     return (
@@ -113,7 +114,7 @@ export const layoutPropsList = [
 ];
 
 const ComboBoxImplementation = React.forwardRef(
-  (props: IComboBoxProps, ref?: any) => {
+  (props: Partial<Omit<TextInputProps, 'onFocus' | 'onBlur'>> & IComboBoxProps, ref?: any) => {
     const [layoutProps] = themeTools.extractInObject(props, layoutPropsList);
     const state = useComboBoxState(props);
 
@@ -159,6 +160,7 @@ const ComboBoxImplementation = React.forwardRef(
           )}
           <Input
             {...inputProps}
+            placeholder={props.placeholder}
             ref={inputRef}
             InputRightElement={
               <Pressable {...buttonProps} ref={triggerRef}>
