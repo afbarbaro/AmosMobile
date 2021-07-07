@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react"
 import { BackHandler } from "react-native"
 import { PartialState, NavigationState, NavigationContainerRef } from "@react-navigation/native"
-import { Storage } from "../utils/storage"
 
 export const RootNavigation = {
   navigate(name: string) {
     name // eslint-disable-line no-unused-expressions
   },
-  goBack() {}, // eslint-disable-line @typescript-eslint/no-empty-function
-  resetRoot(state?: PartialState<NavigationState> | NavigationState) {}, // eslint-disable-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  goBack() { }, // eslint-disable-line @typescript-eslint/no-empty-function
+  resetRoot(state?: PartialState<NavigationState> | NavigationState) { }, // eslint-disable-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   getRootState(): NavigationState {
     return {} as any
   },
@@ -94,16 +93,14 @@ export function useBackButtonHandler(
 /**
  * Custom hook for persisting navigation state.
  */
-export function useNavigationPersistence(storage: Storage, persistenceKey: string) {
-  const [initialNavigationState, setInitialNavigationState] = useState<NavigationState>(
-    {} as NavigationState,
-  )
+export function useNavigationPersistence(storage: any, persistenceKey: string) {
+  const [initialNavigationState, setInitialNavigationState] = useState<NavigationState>()
   const [isRestoringNavigationState, setIsRestoringNavigationState] = useState(true)
 
   const routeNameRef = useRef<string>()
   const onNavigationStateChange = (state: NavigationState | undefined) => {
     const previousRouteName = routeNameRef.current
-    const currentRouteName = getActiveRouteName(state || { routes: [] })
+    const currentRouteName = getActiveRouteName(state!)
 
     if (previousRouteName !== currentRouteName) {
       // track screens.

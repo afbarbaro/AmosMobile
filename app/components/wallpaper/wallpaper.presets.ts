@@ -20,12 +20,12 @@ export const presets = {
   /**
    * The default wallpaper styles.
    */
-  stretch: {
+  stretch: ({
     ...BASE,
     resizeMode: "stretch",
-    width: (null as unknown) as undefined, // Have to set these to null because android ¯\_(ツ)_/¯
-    height: (null as unknown) as undefined,
-  } as ImageStyle,
+    width: null, // Have to set these to null because android ¯\_(ツ)_/¯
+    height: null,
+  } as unknown) as ImageStyle,
 }
 
 /**

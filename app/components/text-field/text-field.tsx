@@ -80,7 +80,7 @@ export function TextField(props: TextFieldProps) {
 
   const containerStyles = [CONTAINER, PRESETS[preset], styleOverride]
   const inputStyles = [INPUT, inputStyleOverride]
-  const actualPlaceholder = placeholderTx ? translate(placeholderTx) : placeholder
+  const actualPlaceholder = placeholderTx ? translate(placeholderTx) ?? undefined : placeholder
 
   return (
     <View style={containerStyles}>

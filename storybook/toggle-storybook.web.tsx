@@ -1,12 +1,12 @@
-import React, { useState, useEffect, FC } from "react"
+import React, { useState, useEffect, PropsWithChildren } from "react"
 import * as QueryString from "query-string"
 
 interface StorybookQueryParams {
   storybook?: boolean
 }
 
-export const ToggleStorybook: FC = (props) => {
-  const [StorybookUIRoot, setStorybookUIRoot] = useState<any>(null)
+export const ToggleStorybook = (props: PropsWithChildren<unknown>) => {
+  const [StorybookUIRoot, setStorybookUIRoot] = useState<React.JSXElementConstructor<unknown> | null>(null)
   const [queryParams, setQueryParams] = useState<StorybookQueryParams>({})
 
   useEffect(() => {
@@ -25,6 +25,6 @@ export const ToggleStorybook: FC = (props) => {
   if (queryParams?.storybook) {
     return StorybookUIRoot ? <StorybookUIRoot /> : null
   } else {
-    return <>{props.children}</>
+    return props.children
   }
 }

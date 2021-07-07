@@ -16,6 +16,8 @@ module.exports = async function (env, argv) {
   //   config.optimization.minimize = false
   // }
 
+  config.resolve.alias['victory-native'] = 'victory';
+
   // Finally return the new config for the CLI to use.
   return config
 }
