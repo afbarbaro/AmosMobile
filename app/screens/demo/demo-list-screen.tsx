@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { VictoryChart, VictoryContainer, VictoryLine } from 'victory-native'
-import { Header, Screen, Wallpaper } from "../../components"
+import { Header, Screen } from "../../components"
 import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
@@ -27,8 +27,13 @@ const HEADER_TITLE: TextStyle = {
   lineHeight: 15,
   textAlign: "center",
 }
+const ICON: ViewStyle = {
+  paddingRight: spacing[2], paddingLeft: spacing[2]
+};
+
 const GRAPH = {
-  height: 'auto'
+  height: 'auto',
+  zIndex: -1,
 } as const;
 
 export const DemoListScreen = observer(function DemoListScreen() {
@@ -48,7 +53,6 @@ export const DemoListScreen = observer(function DemoListScreen() {
 
   return (
     <View testID="DemoListScreen" style={FULL}>
-      {/* <Wallpaper /> */}
       <Screen style={CONTAINER} preset="fixed" backgroundColor={color.transparent}>
         <Header
           headerTx="demoListScreen.title"
@@ -58,13 +62,10 @@ export const DemoListScreen = observer(function DemoListScreen() {
           titleStyle={HEADER_TITLE}
         />
         <Select
-          bg={color.palette.orange}
           ml={spacing[2]}
           mr={spacing[2]}
-          zIndex={999}
           options={symbolItems}
           onChange={setFilterText}
-          onTouchStart={(event) => console.debug("event", event)}
           onSelectedItemChange={(value) => console.info("Selected symbol ", value)}
           getOptionKey={(item: SymbolSnapshot) => item.name}
           getOptionLabel={(item: SymbolSnapshot) => item.name}
@@ -72,9 +73,9 @@ export const DemoListScreen = observer(function DemoListScreen() {
           toggleIcon={(e: any) => {
             const { isOpen }: { isOpen: boolean } = e;
             return isOpen ? (
-              <AntDesign name="up" size={32} p={10} />
+              <AntDesign name="up" size={32} style={ICON} />
             ) : (
-              <AntDesign name="down" size={32} p={10} />
+              <AntDesign name="down" size={32} style={ICON} />
             );
           }}
         />
@@ -91,6 +92,6 @@ export const DemoListScreen = observer(function DemoListScreen() {
           />
         </VictoryChart>
       </Screen>
-    </View>
+    </View >
   )
 })
