@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons"
 import { Flex, Spinner } from "native-base"
 import React, { FC } from "react"
-import { View, ViewStyle } from "react-native"
+import { ViewStyle } from "react-native"
 import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
 import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
@@ -36,6 +36,7 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
   }, [filterText])
 
   const chartData = selectedSymbol ? (forecastStore.getForecast(selectedSymbol)?.historical || []) : [];
+
   return (
     <>
       <Select
@@ -81,16 +82,22 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
           />
           <VictoryAxis crossAxis
             style={{
-              ticks: { stroke: "grey", size: 5 },
-              // tickLabels: { display: 'none' }
+              axis: { stroke: 'dimgray' },
+              ticks: { stroke: 'dimgray', size: 5 },
+              tickLabels: { fill: 'dimgray' }
             }}
             tickFormat={(tick: string) =>
               typeof tick === 'string' ? tick.substring(0, 7) : tick
             }
             tickCount={4}
           />
-          <VictoryAxis dependentAxis />
-
+          <VictoryAxis dependentAxis
+            style={{
+              axis: { stroke: 'dimgray' },
+              ticks: { stroke: 'dimgray', size: 5 },
+              tickLabels: { fill: 'dimgray' }
+            }}
+          />
         </VictoryChart>
       )}
     </>
