@@ -25,21 +25,29 @@ export async function createEnvironment() {
  * Setup the root state.
  */
 export async function setupRootStore() {
-  let rootStore: RootStore
-  let data: any
-
   // prepare the environment that will be associated with the RootStore.
   const env = await createEnvironment()
+
+  // load data from storage
+  let data: Record<string | number | symbol, unknown>
   try {
-    // load data from storage
     data = (await storage.load(ROOT_STATE_STORAGE_KEY)) || {}
-    rootStore = RootStoreModel.create(data, env)
   } catch (e) {
     // if there's any problems loading, then let's at least fallback to an empty state
     // instead of crashing.
-    rootStore = RootStoreModel.create({}, env)
+    data = {}
 
     // but please inform us what happened
+    __DEV__ && console.tron.error?.(e.message, null)
+  }
+
+  let rootStore: RootStore
+  try {
+    rootStore = RootStoreModel.create(data, env)
+  } catch (e) {
+    data = {}
+    rootStore = RootStoreModel.create(data, env)
+
     __DEV__ && console.tron.error?.(e.message, null)
   }
 

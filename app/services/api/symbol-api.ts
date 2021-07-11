@@ -1,6 +1,6 @@
 import { ApiResponse } from "apisauce"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
-import { Api } from "./api"
+import { Api } from "."
 import { GeneralApiProblem, getGeneralApiProblem } from "./api-problem"
 
 export class SymbolApi {

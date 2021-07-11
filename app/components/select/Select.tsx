@@ -1,13 +1,17 @@
-import React from 'react';
-import { useButton } from '@react-native-aria/button';
-import { ComboBoxState, useComboBoxState } from '@react-stately/combobox';
-import { useComboBox } from '@react-native-aria/combobox';
-import { useListBox, useOption } from '@react-native-aria/listbox';
-import { ScrollView, findNodeHandle, Platform, TextInput, TextInputProps } from 'react-native';
-import { Item } from '@react-stately/collections';
-import { Box, Input, Text, Pressable, useThemeProps, themeTools, IBoxProps, IInputProps } from 'native-base';
-import type { ITypeaheadProps, IComboBoxProps } from 'native-base/lib/typescript/components/composites/Typeahead/types';
-import { color } from '../../theme';
+import { AntDesign } from "@expo/vector-icons"
+import { useButton } from "@react-native-aria/button"
+import { useComboBox } from "@react-native-aria/combobox"
+import { useListBox, useOption } from "@react-native-aria/listbox"
+import { Item } from "@react-stately/collections"
+import { ComboBoxState, useComboBoxState } from "@react-stately/combobox"
+import { Box, Input, Pressable, Text, themeTools, useThemeProps } from "native-base"
+import type {
+  IComboBoxProps,
+  ITypeaheadProps,
+} from "native-base/lib/typescript/components/composites/Typeahead/types"
+import React from "react"
+import { findNodeHandle, Platform, ScrollView, TextInput, TextInputProps } from "react-native"
+import { color, spacing } from "../../theme"
 
 // eslint-disable-next-line react/display-name
 export const Select = React.forwardRef(
@@ -21,36 +25,32 @@ export const Select = React.forwardRef(
       onChange,
       numberOfItems,
       ...rest
-    }: ITypeaheadProps & Partial<Omit<TextInputProps, 'onFocus' | 'onBlur' | 'onChange'>>,
-    ref?: any
+    }: ITypeaheadProps & { labelInline?: boolean } & Partial<Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">>,
+    ref?: any,
   ) => {
     return (
       <ComboBoxImplementation
         {...rest}
         onSelectionChange={onSelectedItemChange}
-        items={
-          numberOfItems !== undefined
-            ? options.slice(0, numberOfItems)
-            : options
-        }
+        items={numberOfItems !== undefined ? options.slice(0, numberOfItems) : options}
         onInputChange={onChange}
         ref={ref}
       >
         {(item: any) => {
-          if (typeof item !== 'string' && getOptionLabel === undefined) {
-            throw new Error('Please use getOptionLabel prop');
+          if (typeof item !== "string" && getOptionLabel === undefined) {
+            throw new Error("Please use getOptionLabel prop")
           }
 
           if (item.id === undefined && getOptionKey === undefined) {
-            throw new Error('Please use getOptionKey prop');
+            throw new Error("Please use getOptionKey prop")
           }
 
-          const optionLabel = getOptionLabel ? getOptionLabel(item) : item;
+          const optionLabel = getOptionLabel ? getOptionLabel(item) : item
           const optionKey = getOptionKey
             ? getOptionKey(item)
             : item.id !== undefined
               ? item.id
-              : optionLabel;
+              : optionLabel
 
           return (
             <Item textValue={optionLabel} key={optionKey}>
@@ -62,140 +62,164 @@ export const Select = React.forwardRef(
                 </Box>
               )}
             </Item>
-          );
+          )
         }}
       </ComboBoxImplementation>
-    );
-  }
-);
+    )
+  },
+)
 
 export const layoutPropsList = [
-  'm',
-  'mt',
-  'mb',
-  'ml',
-  'mr',
-  'p',
-  'pt',
-  'pb',
-  'pl',
-  'pr',
-  'position',
-  'flex',
-  'zIndex',
-  'top',
-  'right',
-  'bottom',
-  'left',
-  'h',
-  'w',
-  'minW',
-  'maxW',
-  'minH',
-  'maxH',
-  'height',
-  'width',
-  'minWidth',
-  'maxWidth',
-  'minHeight',
-  'maxHeight',
-  'flexBasis',
-  'flexDirection',
-  'flexGrow',
-  'flexShrink',
-  'flexWrap',
-  'direction',
-  'justify',
-  'justifyContent',
-  'align',
-  'alignContent',
-  'alignItems',
-  'alignSelf',
-];
+  "m",
+  "mt",
+  "mb",
+  "ml",
+  "mr",
+  "p",
+  "pt",
+  "pb",
+  "pl",
+  "pr",
+  "position",
+  "flex",
+  "zIndex",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "h",
+  "w",
+  "minW",
+  "maxW",
+  "minH",
+  "maxH",
+  "height",
+  "width",
+  "minWidth",
+  "maxWidth",
+  "minHeight",
+  "maxHeight",
+  "flexBasis",
+  "flexDirection",
+  "flexGrow",
+  "flexShrink",
+  "flexWrap",
+  "direction",
+  "justify",
+  "justifyContent",
+  "align",
+  "alignContent",
+  "alignItems",
+  "alignSelf",
+]
 
 const ComboBoxImplementation = React.forwardRef(
-  (props: Partial<Omit<TextInputProps, 'onFocus' | 'onBlur'>> & IComboBoxProps, ref?: any) => {
-    const [layoutProps] = themeTools.extractInObject(props, layoutPropsList);
-    const state = useComboBoxState(props);
+  (props: Partial<Omit<TextInputProps, "onFocus" | "onBlur">> & IComboBoxProps & { labelInline?: boolean }, ref?: any) => {
+    const [layoutProps] = themeTools.extractInObject(props, layoutPropsList)
+    const state = useComboBoxState(props)
 
-    const triggerRef = React.useRef(null);
-    const inputRef = React.useRef(null);
-    const listBoxRef = React.useRef(null);
-    const popoverRef = React.useRef(null);
+    const triggerRef = React.useRef(null)
+    const inputRef = React.useRef(null)
+    const listBoxRef = React.useRef(null)
+    const popoverRef = React.useRef(null)
 
-    const {
-      buttonProps: triggerProps,
-      inputProps,
-      listBoxProps,
-      labelProps,
-    } = useComboBox(
+    const { buttonProps: triggerProps, inputProps, listBoxProps, labelProps } = useComboBox(
       {
         ...props,
         inputRef,
         buttonRef: triggerRef,
         listBoxRef,
         popoverRef,
-        menuTrigger: 'input',
+        menuTrigger: "input",
       },
-      state
-    );
+      state,
+    )
 
     const toggleIconSetter = () => {
-      if (typeof props.toggleIcon === 'function')
+      if (typeof props.toggleIcon === "function")
         return props.toggleIcon({
           isOpen: state.isOpen,
-        });
-      return props.toggleIcon;
-    };
+        })
+      return props.toggleIcon
+    }
 
-    const { buttonProps } = useButton(triggerProps);
+    const { buttonProps } = useButton(triggerProps)
+
+    const input = (<Input
+      paddingLeft={2}
+      paddingRight={2}
+      {...inputProps}
+      placeholder={props.placeholder}
+      ref={inputRef}
+      InputLeftElement={
+        <AntDesign
+          name="search1"
+          size={16}
+          color={color.dim}
+          style={{ paddingLeft: spacing[3] }}
+        />
+      }
+      InputRightElement={
+        <Pressable {...buttonProps} ref={triggerRef}>
+          {toggleIconSetter()}
+        </Pressable>
+      }
+    />)
+
+    const listBoxPopup = (
+      <ListBoxPopup
+        {...listBoxProps}
+        listBoxRef={listBoxRef}
+        popoverRef={popoverRef}
+        state={state}
+        label={props.label}
+        inputRef={inputRef}
+      />
+    )
 
     return (
       <Box flexDirection="row" {...layoutProps} ref={ref}>
-        <Box flex={1}>
+        <Box flex={1}
+          {...props.labelInline ? { flexDirection: "row", justifyContent: 'space-between' } : {}}
+        >
           {props.label && (
-            <Text {...labelProps} pb={1}>
+            <Text {...labelProps} pb={1}
+              {...props.labelInline ? { alignContent: "flex-start", alignSelf: 'center', pr: 2, ml: -1 } : {}}
+            >
               {props.label}
             </Text>
           )}
-          <Input
-            {...inputProps}
-            placeholder={props.placeholder}
-            ref={inputRef}
-            InputRightElement={
-              <Pressable {...buttonProps} ref={triggerRef}>
-                {toggleIconSetter()}
-              </Pressable>
-            }
-          />
-
-          {state.isOpen && (
-            <ListBoxPopup
-              {...listBoxProps}
-              listBoxRef={listBoxRef}
-              popoverRef={popoverRef}
-              state={state}
-              label={props.label}
-              inputRef={inputRef}
-            />
-          )}
+          {props.labelInline
+            ? (
+              <Box flex={1} flexDirection='column'>
+                {input}
+                {state.isOpen && listBoxPopup}
+              </Box>
+            )
+            : (
+              <>
+                {input}
+                {state.isOpen && listBoxPopup}
+              </>
+            )
+          }
         </Box>
       </Box>
-    );
-  }
-);
+    )
+  },
+)
 
 type IListBoxProps = {
-  popoverRef: any;
-  listBoxRef: any;
-  state: ComboBoxState<any>;
-  dropdownHeight: number;
-  label: string;
+  popoverRef: any
+  listBoxRef: any
+  state: ComboBoxState<any>
+  dropdownHeight: number
+  label: string
   inputRef: React.RefObject<TextInput>
-};
+}
 
 function ListBoxPopup(props: IListBoxProps) {
-  const { popoverRef, listBoxRef, state, dropdownHeight, label, inputRef } = props;
+  const { popoverRef, listBoxRef, state, dropdownHeight, label, inputRef } = props
 
   const { listBoxProps } = useListBox(
     {
@@ -205,8 +229,8 @@ function ListBoxPopup(props: IListBoxProps) {
       isVirtualized: true,
     },
     state,
-    listBoxRef
-  );
+    listBoxRef,
+  )
 
   return (
     <Box ref={popoverRef}>
@@ -215,10 +239,10 @@ function ListBoxPopup(props: IListBoxProps) {
           {...listBoxProps}
           keyboardShouldPersistTaps="handled"
           ref={(node) => {
-            if (Platform.OS === 'web') {
-              listBoxRef.current = findNodeHandle(node);
+            if (Platform.OS === "web") {
+              listBoxRef.current = findNodeHandle(node)
             } else {
-              listBoxRef.current = node;
+              listBoxRef.current = node
             }
           }}
         >
@@ -228,16 +252,24 @@ function ListBoxPopup(props: IListBoxProps) {
         </ScrollView>
       </Box>
     </Box>
-  );
+  )
 }
 
-function Option({ item, state, inputRef }: { item: any; state: ComboBoxState<any>, inputRef: React.RefObject<TextInput> }) {
-  const searchItemStyle = useThemeProps('TypeAheadSearchItem', {});
+function Option({
+  item,
+  state,
+  inputRef,
+}: {
+  item: any
+  state: ComboBoxState<any>
+  inputRef: React.RefObject<TextInput>
+}) {
+  const searchItemStyle = useThemeProps("TypeAheadSearchItem", {})
 
-  const ref = React.useRef(null);
-  const isDisabled = state.disabledKeys.has(item.key);
-  const isSelected = state.selectionManager.isSelected(item.key);
-  const isFocused = state.selectionManager.focusedKey === item.key;
+  const ref = React.useRef(null)
+  const isDisabled = state.disabledKeys.has(item.key)
+  const isSelected = state.selectionManager.isSelected(item.key)
+  const isFocused = state.selectionManager.focusedKey === item.key
 
   const { optionProps } = useOption(
     {
@@ -248,33 +280,33 @@ function Option({ item, state, inputRef }: { item: any; state: ComboBoxState<any
       shouldUseVirtualFocus: true,
     },
     state,
-    ref
-  );
+    ref,
+  )
 
-  let backgroundColor = searchItemStyle.backgroundColor;
-  let opacity = 1;
+  let backgroundColor = searchItemStyle.backgroundColor
+  let opacity = 1
 
   if (isSelected) {
-    backgroundColor = searchItemStyle._focus.backgroundColor;
+    backgroundColor = searchItemStyle._focus.backgroundColor
   } else if (isFocused) {
-    backgroundColor = searchItemStyle._focus.backgroundColor;
+    backgroundColor = searchItemStyle._focus.backgroundColor
   } else if (isDisabled) {
-    opacity = 0.6;
-    backgroundColor = searchItemStyle._disabled.backgroundColor;
+    opacity = 0.6
+    backgroundColor = searchItemStyle._disabled.backgroundColor
   }
 
   return (
     <Pressable
       {...optionProps}
       opacity={opacity}
-      cursor={
-        isDisabled ? (Platform.OS === 'web' ? 'not-allowed' : null) : null
-      }
+      cursor={isDisabled ? (Platform.OS === "web" ? "not-allowed" : null) : null}
       backgroundColor={backgroundColor}
       ref={ref}
-      onResponderEnd={(_e) => { inputRef.current?.blur(); }}
+      onResponderEnd={(_e) => {
+        inputRef.current?.blur()
+      }}
     >
       {item.rendered}
     </Pressable>
-  );
+  )
 }

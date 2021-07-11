@@ -1,6 +1,6 @@
 const ValidateJS = require("validate.js")
 
-// HACK(steve): wierd typescript situation because of strange typings
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- HACK: wierd typescript situation because of strange typings
 const Validate: any = ValidateJS.default ? ValidateJS.default : ValidateJS
 
 /**

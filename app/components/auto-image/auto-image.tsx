@@ -15,12 +15,12 @@ export function AutoImage(props: ImageProps) {
 
   useLayoutEffect(() => {
     if (props.source?.uri) {
-      RNImage.getSize(props.source.uri as any, (width, height) => {
+      RNImage.getSize(props.source.uri, (width, height) => {
         setImageSize({ width, height })
       })
     } else if (Platform.OS === "web") {
       // web requires a different method to get it's size
-      RNImage.getSize(props.source as any, (width, height) => {
+      RNImage.getSize(props.source as string, (width, height) => {
         setImageSize({ width, height })
       })
     } else {

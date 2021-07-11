@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "start": "expo start",
+    "start:prod": "expo start --no-dev --minify",
     "test:e2e": "./bin/downloadExpoApp.sh && detox test --configuration ios.sim.expo",
     "build:e2e": "detox build -c ios.sim.expo",
     "ci:test:e2e": "detox test -c ios.sim.release -l verbose --cleanup",
@@ -45,6 +46,7 @@
     "query-string": "7.0.0",
     "react": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+    "react-native-big-list": "^1.3.15",
     "react-native-gesture-handler": "1.10.3",
     "react-native-keychain": "6.2.0",
     "react-native-safe-area-context": "3.1.9",
@@ -188,7 +190,12 @@
       "@typescript-eslint/no-explicit-any": 1,
       "@typescript-eslint/no-object-literal-type-assertion": 0,
       "@typescript-eslint/no-var-requires": 0,
-      "@typescript-eslint/no-unused-vars":["error", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
       "comma-dangle": 0,
       "multiline-ternary": 0,
       "no-undef": 0,
