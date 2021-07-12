@@ -5,13 +5,13 @@ import { TextStyle, View, ViewStyle } from "react-native"
 import { Header, Screen } from "../../components"
 import { Chart } from "../../components/chart/Chart"
 import { useStores } from "../../models"
-import { color, spacing } from "../../theme"
+import { palette, spacing } from "../../theme"
 
 const FULL: ViewStyle = {
   flex: 1,
 }
 const CONTAINER: ViewStyle = {
-  backgroundColor: color.transparent,
+  backgroundColor: palette.transparent,
 }
 const HEADER: TextStyle = {
   paddingBottom: spacing[5] - 1,
@@ -25,7 +25,7 @@ const HEADER_TITLE: TextStyle = {
   textAlign: "center",
 }
 
-export const DemoListScreen = observer(function DemoListScreen() {
+export const ChartsScreen = observer(function ChartsScreen() {
   const navigation = useNavigation()
   const goBack = () => navigation.goBack()
 
@@ -35,10 +35,10 @@ export const DemoListScreen = observer(function DemoListScreen() {
   }, [])
 
   return (
-    <View testID="DemoListScreen" style={FULL}>
-      <Screen style={CONTAINER} preset="fixed" backgroundColor={color.transparent}>
+    <View testID="ChartsScreen" style={FULL}>
+      <Screen style={CONTAINER} preset="fixed">
         <Header
-          headerTx="demoListScreen.title"
+          headerTx="chartsScreen.title"
           leftIcon="back"
           onLeftPress={goBack}
           style={HEADER}

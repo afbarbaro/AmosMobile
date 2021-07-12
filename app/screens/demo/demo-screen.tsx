@@ -2,28 +2,20 @@ import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { ImageStyle, Platform, TextStyle, View, ViewStyle } from "react-native"
-import {
-  AutoImage as Image,
-  BulletItem,
-  Button,
-  Header,
-  Screen,
-  Text,
-  Wallpaper,
-} from "../../components"
-import { color, spacing } from "../../theme"
+import { AutoImage as Image, BulletItem, Button, Header, Screen, Text } from "../../components"
+import { palette, spacing } from "../../theme"
 export const logoIgnite = require("./logo-ignite.png")
 export const heart = require("./heart.png")
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
-  backgroundColor: color.transparent,
+  backgroundColor: palette.transparent,
   paddingHorizontal: spacing[4],
 }
 const DEMO: ViewStyle = {
   paddingVertical: spacing[4],
   paddingHorizontal: spacing[4],
-  backgroundColor: color.palette.deepPurple,
+  backgroundColor: palette.deepPurple,
 }
 const BOLD: TextStyle = { fontWeight: "bold" }
 const DEMO_TEXT: TextStyle = {
@@ -119,8 +111,7 @@ export const DemoScreen = observer(function DemoScreen() {
         preview: "More control with display()",
         important: true,
         image: {
-          uri:
-            "https://avatars2.githubusercontent.com/u/3902527?s=200&u=a0d16b13ed719f35d95ca0f4440f5d07c32c349a&v=4",
+          uri: "https://avatars2.githubusercontent.com/u/3902527?s=200&u=a0d16b13ed719f35d95ca0f4440f5d07c32c349a&v=4",
         },
       })
     },
@@ -129,8 +120,7 @@ export const DemoScreen = observer(function DemoScreen() {
 
   return (
     <View testID="DemoScreen" style={FULL}>
-      <Wallpaper />
-      <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
+      <Screen style={CONTAINER} preset="scroll">
         <Header
           headerTx="demoScreen.howTo"
           leftIcon="back"
@@ -154,12 +144,6 @@ export const DemoScreen = observer(function DemoScreen() {
           />
           <Text style={HINT} tx={`demoScreen.${Platform.OS}ReactotronHint` as const} />
         </View>
-        <Button
-          style={DEMO}
-          textStyle={DEMO_TEXT}
-          tx="demoScreen.demoList"
-          onPress={() => navigation.navigate("demoList")}
-        />
         <Image source={logoIgnite} style={IGNITE} />
         <View style={LOVE_WRAPPER}>
           <Text style={LOVE} text="Made with" />

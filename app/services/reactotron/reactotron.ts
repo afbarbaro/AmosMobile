@@ -19,7 +19,7 @@ declare global {
 }
 
 /** Do Nothing. */
-const noop = <T>(..._args: any[]) => (undefined as unknown) as T
+const noop = <T>(..._args: any[]) => undefined as unknown as T
 
 // in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
 if (__DEV__) {

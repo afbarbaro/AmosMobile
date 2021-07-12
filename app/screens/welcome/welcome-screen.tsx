@@ -2,17 +2,16 @@ import React from "react"
 import { View, ViewStyle, TextStyle, ImageStyle, SafeAreaView } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
-import { Button, Header, Screen, Text, Wallpaper, AutoImage as Image } from "../../components"
-import { color, spacing, typography } from "../../theme"
+import { Button, Header, Screen, Text, AutoImage as Image } from "../../components"
+import { palette, spacing, typography } from "../../theme"
 const bowserLogo = require("./bowser.png")
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
-  backgroundColor: color.transparent,
   paddingHorizontal: spacing[4],
 }
 const TEXT: TextStyle = {
-  color: color.palette.white,
+  color: palette.darkerGrey,
   fontFamily: typography.primary,
 }
 const BOLD: TextStyle = { fontWeight: "bold" }
@@ -55,7 +54,7 @@ const BOWSER: ImageStyle = {
 }
 const CONTENT: TextStyle = {
   ...TEXT,
-  color: "#BAB6C8",
+  color: palette.darkGrey,
   fontSize: 15,
   lineHeight: 22,
   marginBottom: spacing[5],
@@ -63,15 +62,16 @@ const CONTENT: TextStyle = {
 const CONTINUE: ViewStyle = {
   paddingVertical: spacing[4],
   paddingHorizontal: spacing[4],
-  backgroundColor: color.palette.deepPurple,
+  backgroundColor: palette.deepPurple,
 }
 const CONTINUE_TEXT: TextStyle = {
   ...TEXT,
   ...BOLD,
+  color: palette.offWhite,
   fontSize: 13,
   letterSpacing: 2,
 }
-const FOOTER: ViewStyle = { backgroundColor: "#20162D" }
+// const FOOTER: ViewStyle = { backgroundColor: "#20162D" }
 const FOOTER_CONTENT: ViewStyle = {
   paddingVertical: spacing[4],
   paddingHorizontal: spacing[4],
@@ -83,8 +83,7 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
 
   return (
     <View testID="WelcomeScreen" style={FULL}>
-      <Wallpaper />
-      <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
+      <Screen style={CONTAINER} preset="scroll">
         <Header headerTx="welcomeScreen.poweredBy" style={HEADER} titleStyle={HEADER_TITLE} />
         <Text style={TITLE_WRAPPER}>
           <Text style={TITLE} text="Your new app, " />
@@ -102,7 +101,7 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
           using Ignite.
         </Text>
       </Screen>
-      <SafeAreaView style={FOOTER}>
+      <SafeAreaView>
         <View style={FOOTER_CONTENT}>
           <Button
             testID="next-screen-button"

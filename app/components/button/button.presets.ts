@@ -1,5 +1,10 @@
 import { ViewStyle, TextStyle } from "react-native"
-import { color, spacing } from "../../theme"
+import { spacing } from "../../theme"
+
+/**
+ * A list of preset names.
+ */
+export type ButtonPresetNames = "primary" | "link"
 
 /**
  * All text will start off looking like this.
@@ -21,11 +26,11 @@ const BASE_TEXT: TextStyle = {
  *
  * You want to customize these to whatever you need in your app.
  */
-export const viewPresets: Record<string, ViewStyle> = {
+export const viewPresets = {
   /**
    * A smaller piece of secondard information.
    */
-  primary: { ...BASE_VIEW, backgroundColor: color.palette.orange } as ViewStyle,
+  primary: { ...BASE_VIEW } as ViewStyle,
 
   /**
    * A button without extras.
@@ -36,19 +41,13 @@ export const viewPresets: Record<string, ViewStyle> = {
     paddingVertical: 0,
     alignItems: "flex-start",
   } as ViewStyle,
-}
+} as const
 
-export const textPresets: Record<ButtonPresetNames, TextStyle> = {
-  primary: { ...BASE_TEXT, fontSize: 9, color: color.palette.white } as TextStyle,
+export const textPresets = {
+  primary: { ...BASE_TEXT, fontSize: 9 } as TextStyle,
   link: {
     ...BASE_TEXT,
-    color: color.text,
     paddingHorizontal: 0,
     paddingVertical: 0,
   } as TextStyle,
-}
-
-/**
- * A list of preset names.
- */
-export type ButtonPresetNames = keyof typeof viewPresets
+} as const

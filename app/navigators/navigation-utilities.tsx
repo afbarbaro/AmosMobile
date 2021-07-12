@@ -3,13 +3,11 @@ import { BackHandler } from "react-native"
 import { PartialState, NavigationState, NavigationContainerRef } from "@react-navigation/native"
 
 export const RootNavigation = {
-  navigate(name: string) {
-    name // eslint-disable-line no-unused-expressions
-  },
+  navigate(_name: string) {}, // eslint-disable-line @typescript-eslint/no-empty-function
   goBack() {}, // eslint-disable-line @typescript-eslint/no-empty-function
-  resetRoot(state?: PartialState<NavigationState> | NavigationState) {}, // eslint-disable-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  resetRoot(_state?: PartialState<NavigationState> | NavigationState) {}, // eslint-disable-line @typescript-eslint/no-empty-function
   getRootState(): NavigationState {
-    return {} as any
+    return {} as NavigationState
   },
 }
 

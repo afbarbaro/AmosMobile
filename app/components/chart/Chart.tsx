@@ -6,8 +6,7 @@ import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victor
 import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
-import { color, spacing } from "../../theme"
-
+import { useAppColor, spacing } from "../../theme"
 
 const ICON: ViewStyle = {
   paddingRight: spacing[2],
@@ -20,22 +19,21 @@ const GRAPH = {
 } as const
 
 export interface ChartProps {
-  symbols: SymbolSnapshot[],
-
+  symbols: SymbolSnapshot[]
 }
 export const Chart: FC<ChartProps> = ({ symbols }) => {
   const { forecastStore } = useStores()
-
+  const color = useAppColor()
   const [filterText, setFilterText] = React.useState("")
   const [selectedSymbol, setSelectedSymbol] = React.useState<string | null>()
 
   const symbolItems = React.useMemo(() => {
-    return symbols.filter(
-      (item) => item.name.toLowerCase().indexOf(filterText.toLowerCase()) > -1,
-    )
+    return symbols.filter((item) => item.name.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
   }, [filterText])
 
-  const chartData = selectedSymbol ? (forecastStore.getForecast(selectedSymbol)?.historical || []) : [];
+  const chartData = selectedSymbol
+    ? forecastStore.getForecast(selectedSymbol)?.historical || []
+    : []
 
   return (
     <>
@@ -47,11 +45,10 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
         onChange={setFilterText}
         onSelectedItemChange={(value) => {
           if (value) {
-            const snapshot = forecastStore.getForecast(value);
-            if (snapshot && (Date.now() - snapshot.fetchedAt) < 60 * 60 * 1000) {
+            const snapshot = forecastStore.getForecast(value)
+            if (snapshot && Date.now() - snapshot.fetchedAt < 60 * 60 * 1000) {
               setSelectedSymbol(value)
-            }
-            else {
+            } else {
               setSelectedSymbol("")
               forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
             }
@@ -70,32 +67,39 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
         }}
       />
 
-      {selectedSymbol === "" && (<Flex flex={1} justifyContent='center' alignItems='center' zIndex={-1}><Spinner /></Flex>)}
+      {selectedSymbol === "" && (
+        <Flex flex={1} justifyContent="center" alignItems="center" zIndex={-1}>
+          <Spinner />
+        </Flex>
+      )}
 
       {!!selectedSymbol && (
-        <VictoryChart containerComponent={<VictoryContainer style={GRAPH} />}>
+        <VictoryChart
+          padding={{ top: 20, bottom: 50, left: 50, right: 40 }}
+          containerComponent={<VictoryContainer style={GRAPH} />}
+        >
           <VictoryLine
             data={chartData}
             x="Timestamp"
             y="Value"
             style={{ data: { stroke: "steelblue" } }}
           />
-          <VictoryAxis crossAxis
+          <VictoryAxis
+            crossAxis
             style={{
-              axis: { stroke: 'dimgray' },
-              ticks: { stroke: 'dimgray', size: 5 },
-              tickLabels: { fill: 'dimgray' }
+              axis: { stroke: "dimgray" },
+              ticks: { stroke: "dimgray", size: 5 },
+              tickLabels: { fill: "dimgray" },
             }}
-            tickFormat={(tick: string) =>
-              typeof tick === 'string' ? tick.substring(0, 7) : tick
-            }
+            tickFormat={(tick: string) => (typeof tick === "string" ? tick.substring(0, 7) : tick)}
             tickCount={4}
           />
-          <VictoryAxis dependentAxis
+          <VictoryAxis
+            dependentAxis
             style={{
-              axis: { stroke: 'dimgray' },
-              ticks: { stroke: 'dimgray', size: 5 },
-              tickLabels: { fill: 'dimgray' }
+              axis: { stroke: "dimgray" },
+              ticks: { stroke: "dimgray", size: 5 },
+              tickLabels: { fill: "dimgray" },
             }}
           />
         </VictoryChart>

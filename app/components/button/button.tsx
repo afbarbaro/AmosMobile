@@ -1,7 +1,7 @@
 import * as React from "react"
 import { TouchableOpacity } from "react-native"
 import { Text } from "../text/text"
-import { viewPresets, textPresets } from "./button.presets"
+import { textPresets, viewPresets } from "./button.presets"
 import { ButtonProps } from "./button.props"
 
 /**
@@ -21,9 +21,9 @@ export function Button(props: ButtonProps) {
     ...rest
   } = props
 
-  const viewStyle = viewPresets[preset] || viewPresets.primary
+  const viewStyle = viewPresets[preset]
   const viewStyles = [viewStyle, styleOverride]
-  const textStyle = textPresets[preset] || textPresets.primary
+  const textStyle = textPresets[preset]
   const textStyles = [textStyle, textStyleOverride]
 
   const content = children || <Text tx={tx} text={text} style={textStyles} />

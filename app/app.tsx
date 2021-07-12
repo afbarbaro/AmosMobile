@@ -38,7 +38,7 @@ export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 // Define the theme
 const theme = extendTheme({
   useSystemColorMode: false,
-  initialColorMode: "dark",
+  initialColorMode: "light",
 })
 
 /**

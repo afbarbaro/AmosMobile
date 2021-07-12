@@ -4,11 +4,12 @@
  * and a "main" flow (which is contained in your MainNavigator) which the user
  * will use once logged in.
  */
-import React from "react"
+import { AntDesign, Ionicons } from "@expo/vector-icons"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
-import { createStackNavigator } from "@react-navigation/stack"
+import React from "react"
+import { ChartsScreen } from "../screens"
 import { MainNavigator } from "./main-navigator"
-import { color } from "../theme"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -24,24 +25,42 @@ export type RootParamList = {
   mainStack: undefined
 }
 
-const Stack = createStackNavigator<RootParamList>()
+const Tab = createBottomTabNavigator()
 
-const RootStack = () => {
+const RootTabNavigator = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        cardStyle: { backgroundColor: color.palette.white }, // color.palette.deepPurple },
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen
-        name="mainStack"
+    <Tab.Navigator tabBarOptions={{ showLabel: false }}>
+      <Tab.Screen
+        name="home"
         component={MainNavigator}
         options={{
-          headerShown: false,
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color, focused: _focused, size }) => (
+            <Ionicons name="ios-home" color={color} size={size} />
+          ),
         }}
       />
-    </Stack.Navigator>
+      <Tab.Screen
+        name="charts"
+        component={ChartsScreen}
+        options={{
+          tabBarLabel: "Charts",
+          tabBarIcon: ({ color, focused: _focused, size }) => (
+            <AntDesign name="linechart" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="settings"
+        component={MainNavigator}
+        options={{
+          tabBarLabel: "Settings",
+          tabBarIcon: ({ color, focused: _focused, size }) => (
+            <Ionicons name="ios-settings" color={color} size={size} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   )
 }
 
@@ -51,9 +70,21 @@ export const RootNavigator = React.forwardRef<
 >((props, ref) => {
   return (
     <NavigationContainer {...props} ref={ref}>
-      <RootStack />
+      <RootTabNavigator />
     </NavigationContainer>
   )
 })
 
 RootNavigator.displayName = "RootNavigator"
+
+/**
+ * A list of routes from which we're allowed to leave the app when
+ * the user presses the back button on Android.
+ *
+ * Anything not on this list will be a standard `back` action in
+ * react-navigation.
+ *
+ * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
+ */
+const exitRoutes = ["welcome"]
+export const canExit = (routeName: string) => exitRoutes.includes(routeName)

@@ -11,7 +11,7 @@ import type {
 } from "native-base/lib/typescript/components/composites/Typeahead/types"
 import React from "react"
 import { findNodeHandle, Platform, ScrollView, TextInput, TextInputProps } from "react-native"
-import { color, spacing } from "../../theme"
+import { spacing } from "../../theme"
 
 // eslint-disable-next-line react/display-name
 export const Select = React.forwardRef(
@@ -25,7 +25,9 @@ export const Select = React.forwardRef(
       onChange,
       numberOfItems,
       ...rest
-    }: ITypeaheadProps & { labelInline?: boolean } & Partial<Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">>,
+    }: ITypeaheadProps & { labelInline?: boolean } & Partial<
+        Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
+      >,
     ref?: any,
   ) => {
     return (
@@ -49,8 +51,8 @@ export const Select = React.forwardRef(
           const optionKey = getOptionKey
             ? getOptionKey(item)
             : item.id !== undefined
-              ? item.id
-              : optionLabel
+            ? item.id
+            : optionLabel
 
           return (
             <Item textValue={optionLabel} key={optionKey}>
@@ -114,7 +116,11 @@ export const layoutPropsList = [
 ]
 
 const ComboBoxImplementation = React.forwardRef(
-  (props: Partial<Omit<TextInputProps, "onFocus" | "onBlur">> & IComboBoxProps & { labelInline?: boolean }, ref?: any) => {
+  (
+    props: Partial<Omit<TextInputProps, "onFocus" | "onBlur">> &
+      IComboBoxProps & { labelInline?: boolean },
+    ref?: any,
+  ) => {
     const [layoutProps] = themeTools.extractInObject(props, layoutPropsList)
     const state = useComboBoxState(props)
 
@@ -123,7 +129,12 @@ const ComboBoxImplementation = React.forwardRef(
     const listBoxRef = React.useRef(null)
     const popoverRef = React.useRef(null)
 
-    const { buttonProps: triggerProps, inputProps, listBoxProps, labelProps } = useComboBox(
+    const {
+      buttonProps: triggerProps,
+      inputProps,
+      listBoxProps,
+      labelProps,
+    } = useComboBox(
       {
         ...props,
         inputRef,
@@ -145,26 +156,28 @@ const ComboBoxImplementation = React.forwardRef(
 
     const { buttonProps } = useButton(triggerProps)
 
-    const input = (<Input
-      paddingLeft={2}
-      paddingRight={2}
-      {...inputProps}
-      placeholder={props.placeholder}
-      ref={inputRef}
-      InputLeftElement={
-        <AntDesign
-          name="search1"
-          size={16}
-          color={color.dim}
-          style={{ paddingLeft: spacing[3] }}
-        />
-      }
-      InputRightElement={
-        <Pressable {...buttonProps} ref={triggerRef}>
-          {toggleIconSetter()}
-        </Pressable>
-      }
-    />)
+    const input = (
+      <Input
+        paddingLeft={2}
+        paddingRight={2}
+        {...inputProps}
+        placeholder={props.placeholder}
+        ref={inputRef}
+        InputLeftElement={
+          <AntDesign
+            name="search1"
+            size={16}
+            // color={color.dim}
+            style={{ paddingLeft: spacing[3] }}
+          />
+        }
+        InputRightElement={
+          <Pressable {...buttonProps} ref={triggerRef}>
+            {toggleIconSetter()}
+          </Pressable>
+        }
+      />
+    )
 
     const listBoxPopup = (
       <ListBoxPopup
@@ -179,30 +192,32 @@ const ComboBoxImplementation = React.forwardRef(
 
     return (
       <Box flexDirection="row" {...layoutProps} ref={ref}>
-        <Box flex={1}
-          {...props.labelInline ? { flexDirection: "row", justifyContent: 'space-between' } : {}}
+        <Box
+          flex={1}
+          {...(props.labelInline ? { flexDirection: "row", justifyContent: "space-between" } : {})}
         >
           {props.label && (
-            <Text {...labelProps} pb={1}
-              {...props.labelInline ? { alignContent: "flex-start", alignSelf: 'center', pr: 2, ml: -1 } : {}}
+            <Text
+              {...labelProps}
+              pb={1}
+              {...(props.labelInline
+                ? { alignContent: "flex-start", alignSelf: "center", pr: 2, ml: -1 }
+                : {})}
             >
               {props.label}
             </Text>
           )}
-          {props.labelInline
-            ? (
-              <Box flex={1} flexDirection='column'>
-                {input}
-                {state.isOpen && listBoxPopup}
-              </Box>
-            )
-            : (
-              <>
-                {input}
-                {state.isOpen && listBoxPopup}
-              </>
-            )
-          }
+          {props.labelInline ? (
+            <Box flex={1} flexDirection="column">
+              {input}
+              {state.isOpen && listBoxPopup}
+            </Box>
+          ) : (
+            <>
+              {input}
+              {state.isOpen && listBoxPopup}
+            </>
+          )}
         </Box>
       </Box>
     )
