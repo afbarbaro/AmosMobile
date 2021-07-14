@@ -1,11 +1,13 @@
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
-import { Header, Screen } from "../../components"
+import { Button, Header, Screen } from "../../components"
 import { Chart } from "../../components/chart/Chart"
 import { useStores } from "../../models"
+import { SymbolSnapshot } from "../../models/symbol/symbol"
 import { palette, spacing } from "../../theme"
+
 
 const FULL: ViewStyle = {
   flex: 1,
@@ -24,7 +26,18 @@ const HEADER_TITLE: TextStyle = {
   lineHeight: 15,
   textAlign: "center",
 }
-
+const BUTTON: ViewStyle = {
+  marginLeft: spacing[6],
+  marginRight: spacing[6],
+  paddingVertical: spacing[3],
+  paddingHorizontal: spacing[3],
+  backgroundColor: "lightsteelblue",
+}
+const BUTTON_TEXT: TextStyle = {
+  fontWeight: "bold",
+  fontSize: 13,
+  letterSpacing: 2,
+}
 export const ChartsScreen = observer(function ChartsScreen() {
   const navigation = useNavigation()
   const goBack = () => navigation.goBack()
@@ -36,7 +49,7 @@ export const ChartsScreen = observer(function ChartsScreen() {
 
   return (
     <View testID="ChartsScreen" style={FULL}>
-      <Screen style={CONTAINER} preset="fixed">
+      <Screen style={CONTAINER} preset="scroll">
         <Header
           headerTx="chartsScreen.title"
           leftIcon="back"
@@ -44,8 +57,31 @@ export const ChartsScreen = observer(function ChartsScreen() {
           style={HEADER}
           titleStyle={HEADER_TITLE}
         />
-        <Chart symbols={symbolStore.symbols}></Chart>
+        {chartList(symbolStore.symbols)}
       </Screen>
     </View>
   )
 })
+
+export const chartList = (symbols: SymbolSnapshot[]): React.ReactChild[] => {
+  const [charts, setCharts] = useState(1)
+
+  const components: React.ReactElement[] = [];
+  for (let chart = 0; chart < charts; chart++) {
+    components.push(
+      <Chart key={chart} symbols={symbols}></Chart>
+    )
+  }
+
+  components.push(
+    <Button
+      key='add-chart'
+      style={BUTTON}
+      textStyle={BUTTON_TEXT}
+      tx="chartsScreen.addChart"
+      onPress={() => setCharts(charts + 1)}
+    />
+  )
+
+  return components
+}

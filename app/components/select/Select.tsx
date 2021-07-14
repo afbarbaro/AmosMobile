@@ -26,8 +26,8 @@ export const Select = React.forwardRef(
       numberOfItems,
       ...rest
     }: ITypeaheadProps & { labelInline?: boolean } & Partial<
-        Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
-      >,
+      Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
+    >,
     ref?: any,
   ) => {
     return (
@@ -51,8 +51,8 @@ export const Select = React.forwardRef(
           const optionKey = getOptionKey
             ? getOptionKey(item)
             : item.id !== undefined
-            ? item.id
-            : optionLabel
+              ? item.id
+              : optionLabel
 
           return (
             <Item textValue={optionLabel} key={optionKey}>
@@ -160,14 +160,16 @@ const ComboBoxImplementation = React.forwardRef(
       <Input
         paddingLeft={2}
         paddingRight={2}
+        paddingTop={1}
+        paddingBottom={1}
         {...inputProps}
         placeholder={props.placeholder}
         ref={inputRef}
         InputLeftElement={
           <AntDesign
             name="search1"
-            size={16}
-            // color={color.dim}
+            size={14}
+            color={props.placeholderTextColor}
             style={{ paddingLeft: spacing[3] }}
           />
         }
@@ -176,6 +178,14 @@ const ComboBoxImplementation = React.forwardRef(
             {toggleIconSetter()}
           </Pressable>
         }
+        onEndEditing={(e) => {
+          const text = e.nativeEvent.text;
+          const selected = state.selectionManager.firstSelectedKey;
+          const firstKey = state.collection.getFirstKey();
+          if (text && !selected && firstKey) {
+            state.selectionManager.select(firstKey)
+          }
+        }}
       />
     )
 
@@ -250,6 +260,22 @@ function ListBoxPopup(props: IListBoxProps) {
   return (
     <Box ref={popoverRef}>
       <Box position="absolute" width="100%" maxHeight={dropdownHeight ?? 200}>
+        {/* <FlatList
+          {...listBoxProps}
+          keyboardShouldPersistTaps="handled"
+          ref={(node) => {
+            if (Platform.OS === "web") {
+              listBoxRef.current = findNodeHandle(node)
+            } else {
+              listBoxRef.current = node
+            }
+          }}
+          data={[...state.collection]}
+          renderItem=
+          {(i) => (
+            <Option key={i.item.key} item={i.item} state={state} inputRef={inputRef} />
+          )}
+        /> */}
         <ScrollView
           {...listBoxProps}
           keyboardShouldPersistTaps="handled"

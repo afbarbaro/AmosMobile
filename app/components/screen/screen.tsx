@@ -28,10 +28,11 @@ function ScreenWithoutScrolling(props: ScreenProps) {
 }
 
 function ScreenWithScrolling(props: ScreenProps) {
+  const color = useAppColor()
   const insets = useSafeAreaInsets()
   const preset = presets.scroll
   const style = props.style || {}
-  const backgroundStyle = props.backgroundColor ? { backgroundColor: props.backgroundColor } : {}
+  const backgroundStyle = { backgroundColor: props.backgroundColor ?? color.background }
   const insetStyle = { paddingTop: props.unsafe ? 0 : insets.top }
 
   return (

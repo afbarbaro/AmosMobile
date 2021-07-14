@@ -25,7 +25,8 @@
     "windowsReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app."
   },
   "chartsScreen": {
-    "title": "Charts"
+    "title": "CHARTS",
+    "addChart": "Add Chart"
   },
   "storybook": {
     "placeholder": "Placeholder",

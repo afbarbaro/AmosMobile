@@ -20,15 +20,16 @@ const GRAPH = {
 
 export interface ChartProps {
   symbols: SymbolSnapshot[]
+  dataMaxAge?: number
 }
-export const Chart: FC<ChartProps> = ({ symbols }) => {
+export const Chart: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
   const { forecastStore } = useStores()
   const color = useAppColor()
   const [filterText, setFilterText] = React.useState("")
   const [selectedSymbol, setSelectedSymbol] = React.useState<string | null>()
 
   const symbolItems = React.useMemo(() => {
-    return symbols.filter((item) => item.name.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
+    return symbols.filter((item) => item.name.toLowerCase().startsWith(filterText.toLowerCase()))
   }, [filterText])
 
   const chartData = selectedSymbol
@@ -38,6 +39,8 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
   return (
     <>
       <Select
+        autoCorrect={false}
+        placeholderTextColor={color.dim}
         placeholder="Type or pull down and choose"
         ml={spacing[2]}
         mr={spacing[2]}
@@ -46,7 +49,7 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
         onSelectedItemChange={(value) => {
           if (value) {
             const snapshot = forecastStore.getForecast(value)
-            if (snapshot && Date.now() - snapshot.fetchedAt < 60 * 60 * 1000) {
+            if (snapshot && Date.now() - snapshot.fetchedAt < dataMaxAge * 1000) {
               setSelectedSymbol(value)
             } else {
               setSelectedSymbol("")
@@ -60,9 +63,9 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
         // labelInline={false}
         toggleIcon={(e: { isOpen: boolean }) => {
           return e.isOpen ? (
-            <AntDesign name="up" size={24} color={color.dim} style={ICON} />
+            <AntDesign name="up" size={16} color={color.dim} style={ICON} />
           ) : (
-            <AntDesign name="down" size={24} color={color.dim} style={ICON} />
+            <AntDesign name="down" size={16} color={color.dim} style={ICON} />
           )
         }}
       />
@@ -73,9 +76,9 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
         </Flex>
       )}
 
-      {!!selectedSymbol && (
+      {selectedSymbol !== "" && (
         <VictoryChart
-          padding={{ top: 20, bottom: 50, left: 50, right: 40 }}
+          padding={{ top: 10, bottom: 60, left: 70, right: 60 }}
           containerComponent={<VictoryContainer style={GRAPH} />}
         >
           <VictoryLine
@@ -91,7 +94,7 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
               ticks: { stroke: "dimgray", size: 5 },
               tickLabels: { fill: "dimgray" },
             }}
-            tickFormat={(tick: string) => (typeof tick === "string" ? tick.substring(0, 7) : tick)}
+            tickFormat={(tick: string) => (typeof tick === "string" ? tick.substring(0, 7) : '')}
             tickCount={4}
           />
           <VictoryAxis
@@ -101,6 +104,7 @@ export const Chart: FC<ChartProps> = ({ symbols }) => {
               ticks: { stroke: "dimgray", size: 5 },
               tickLabels: { fill: "dimgray" },
             }}
+            tickFormat={chartData.length > 0 ? undefined : (tick: string) => ''}
           />
         </VictoryChart>
       )}
