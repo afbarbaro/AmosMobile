@@ -1,12 +1,15 @@
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import React, { RefObject, useCallback, useEffect, useRef, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
+import { FlatList } from "react-native-gesture-handler"
 import { Button, Header, Screen } from "../../components"
 import { Chart } from "../../components/chart/Chart"
 import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
 import { palette, spacing } from "../../theme"
+
+
 
 
 const FULL: ViewStyle = {
@@ -40,16 +43,18 @@ const BUTTON_TEXT: TextStyle = {
 }
 export const ChartsScreen = observer(function ChartsScreen() {
   const navigation = useNavigation()
-  const goBack = () => navigation.goBack()
+  const goBack = useCallback(() => navigation.goBack(), [navigation])
 
   const { symbolStore } = useStores()
   useEffect(() => {
     symbolStore.getSymbols()
   }, [])
 
+  const screenRef = useRef(null);
+
   return (
     <View testID="ChartsScreen" style={FULL}>
-      <Screen style={CONTAINER} preset="scroll">
+      <Screen style={CONTAINER} preset="scroll" ref={screenRef}>
         <Header
           headerTx="chartsScreen.title"
           leftIcon="back"
@@ -57,14 +62,15 @@ export const ChartsScreen = observer(function ChartsScreen() {
           style={HEADER}
           titleStyle={HEADER_TITLE}
         />
-        {chartList(symbolStore.symbols)}
+        {chartList(symbolStore.symbols, screenRef)}
       </Screen>
     </View>
   )
 })
 
-export const chartList = (symbols: SymbolSnapshot[]): React.ReactChild[] => {
+export const chartList = (symbols: SymbolSnapshot[], screenRef: RefObject<FlatList<unknown>>): React.ReactChild[] => {
   const [charts, setCharts] = useState(1)
+  const scrollToEnd = useRef(false);
 
   const components: React.ReactElement[] = [];
   for (let chart = 0; chart < charts; chart++) {
@@ -73,13 +79,24 @@ export const chartList = (symbols: SymbolSnapshot[]): React.ReactChild[] => {
     )
   }
 
+  useEffect(() => {
+    if (scrollToEnd.current) {
+      scrollToEnd.current = false
+      screenRef.current?.scrollToEnd({ animated: false })
+      // screenRef.current?.scrollToIndex({ index: 0, animated: false })
+    }
+  })
+
   components.push(
     <Button
       key='add-chart'
       style={BUTTON}
       textStyle={BUTTON_TEXT}
       tx="chartsScreen.addChart"
-      onPress={() => setCharts(charts + 1)}
+      onPress={() => {
+        scrollToEnd.current = true;
+        setCharts(charts + 1)
+      }}
     />
   )
 

@@ -1,6 +1,7 @@
 import { AntDesign } from "@expo/vector-icons"
 import { Flex, Spinner } from "native-base"
-import React, { FC } from "react"
+import React, { FC, useMemo, memo } from "react"
+import { useCallback } from "react"
 import { ViewStyle } from "react-native"
 import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
 import { Select } from "../../components/select/Select"
@@ -22,19 +23,41 @@ export interface ChartProps {
   symbols: SymbolSnapshot[]
   dataMaxAge?: number
 }
-export const Chart: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
+const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
   const { forecastStore } = useStores()
   const color = useAppColor()
   const [filterText, setFilterText] = React.useState("")
   const [selectedSymbol, setSelectedSymbol] = React.useState<string | null>()
 
-  const symbolItems = React.useMemo(() => {
+  const symbolItems = useMemo(() => {
     return symbols.filter((item) => item.name.toLowerCase().startsWith(filterText.toLowerCase()))
   }, [filterText])
 
-  const chartData = selectedSymbol
+  const chartData = useMemo(() => selectedSymbol
     ? forecastStore.getForecast(selectedSymbol)?.historical || []
-    : []
+    : [], [selectedSymbol]);
+
+  const onSelectedItemChange = useCallback((value: string) => {
+    if (value) {
+      const snapshot = forecastStore.getForecast(value)
+      if (snapshot && Date.now() - snapshot.fetchedAt < dataMaxAge * 1000) {
+        setSelectedSymbol(value)
+      } else {
+        setSelectedSymbol("")
+        forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
+      }
+    }
+  }, [forecastStore, setSelectedSymbol])
+
+  const getOption = useCallback((item: SymbolSnapshot) => item.name, [])
+
+  const toggleIcon = useCallback((e: { isOpen: boolean }) => {
+    return e.isOpen ? (
+      <AntDesign name="up" size={16} color={color.dim} style={ICON} />
+    ) : (
+      <AntDesign name="down" size={16} color={color.dim} style={ICON} />
+    )
+  }, [color])
 
   return (
     <>
@@ -46,28 +69,12 @@ export const Chart: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         mr={spacing[2]}
         options={symbolItems}
         onChange={setFilterText}
-        onSelectedItemChange={(value) => {
-          if (value) {
-            const snapshot = forecastStore.getForecast(value)
-            if (snapshot && Date.now() - snapshot.fetchedAt < dataMaxAge * 1000) {
-              setSelectedSymbol(value)
-            } else {
-              setSelectedSymbol("")
-              forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
-            }
-          }
-        }}
-        getOptionKey={(item: SymbolSnapshot) => item.name}
-        getOptionLabel={(item: SymbolSnapshot) => item.name}
+        onSelectedItemChange={onSelectedItemChange}
+        getOptionKey={getOption}
+        getOptionLabel={getOption}
         // label="Symbol"
         // labelInline={false}
-        toggleIcon={(e: { isOpen: boolean }) => {
-          return e.isOpen ? (
-            <AntDesign name="up" size={16} color={color.dim} style={ICON} />
-          ) : (
-            <AntDesign name="down" size={16} color={color.dim} style={ICON} />
-          )
-        }}
+        toggleIcon={toggleIcon}
       />
 
       {selectedSymbol === "" && (
@@ -111,3 +118,5 @@ export const Chart: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     </>
   )
 }
+
+export const Chart = memo(ChartInternal);

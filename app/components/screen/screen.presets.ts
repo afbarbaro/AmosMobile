@@ -45,6 +45,14 @@ export const presets = {
     } as ViewStyle,
     inner: { justifyContent: "flex-start", alignItems: "stretch" } as ViewStyle,
   },
+
+  virtualized: {
+    outer: {
+      flex: 1,
+      height: "100%",
+    } as ViewStyle,
+    inner: { justifyContent: "flex-start", alignItems: "stretch" } as ViewStyle,
+  },
 } as const
 
 /**

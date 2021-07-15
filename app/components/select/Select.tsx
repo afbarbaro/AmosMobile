@@ -7,10 +7,10 @@ import { ComboBoxState, useComboBoxState } from "@react-stately/combobox"
 import { Box, Input, Pressable, Text, themeTools, useThemeProps } from "native-base"
 import type {
   IComboBoxProps,
-  ITypeaheadProps,
+  ITypeaheadProps
 } from "native-base/lib/typescript/components/composites/Typeahead/types"
 import React from "react"
-import { findNodeHandle, Platform, ScrollView, TextInput, TextInputProps } from "react-native"
+import { findNodeHandle, FlatList, Platform, ScrollView, TextInput, TextInputProps } from "react-native"
 import { spacing } from "../../theme"
 
 // eslint-disable-next-line react/display-name
