@@ -1,14 +1,36 @@
 import * as React from "react"
 import { forwardRef } from "react"
-import { FlatList, KeyboardAvoidingView, Platform, ScrollViewProps, StatusBar, View } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ScrollViewProps,
+  StatusBar,
+  View,
+} from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppColor } from "../../theme"
 import { isNonScrolling, offsets, presets } from "./screen.presets"
 import { ScreenProps } from "./screen.props"
 
-
 const isIos = Platform.OS === "ios"
+
+const dummy = [{ key: "0" }]
+const VirtualizedView = forwardRef<FlatList, ScrollViewProps & { children: React.ReactNode }>(
+  (props, ref) => {
+    return (
+      <FlatList
+        {...props}
+        ref={ref}
+        nestedScrollEnabled={true}
+        data={dummy}
+        renderItem={undefined}
+        ListHeaderComponent={<>{props.children}</>}
+      />
+    )
+  },
+)
 
 const ScreenWithoutScrolling = forwardRef<KeyboardAvoidingView, ScreenProps>((props, ref) => {
   const color = useAppColor()
@@ -49,6 +71,7 @@ const ScreenWithScrolling = forwardRef<ScrollView, ScreenProps>((props, ref) => 
       <View style={[preset.outer, backgroundStyle, insetStyle]}>
         <ScrollView
           ref={ref}
+          disableScrollViewPanResponder={true}
           style={[preset.outer, backgroundStyle]}
           contentContainerStyle={[preset.inner, style]}
           keyboardShouldPersistTaps={props.keyboardShouldPersistTaps || "handled"}
@@ -78,6 +101,7 @@ const ScreenWithVirtualization = forwardRef<FlatList, ScreenProps>((props, ref) 
       <View style={[preset.outer, backgroundStyle, insetStyle]}>
         <VirtualizedView
           ref={ref}
+          disableScrollViewPanResponder={true}
           style={[preset.outer, backgroundStyle]}
           contentContainerStyle={[preset.inner, style]}
           keyboardShouldPersistTaps={props.keyboardShouldPersistTaps || "handled"}
@@ -94,28 +118,16 @@ const ScreenWithVirtualization = forwardRef<FlatList, ScreenProps>((props, ref) 
  *
  * @param props The screen props
  */
-export const Screen = forwardRef<KeyboardAvoidingView | ScrollView | FlatList, ScreenProps>((props, ref) => {
-  if (props.preset === 'virtualized') {
-    return <ScreenWithVirtualization {...props} ref={ref as React.ForwardedRef<FlatList>} />
-  } else if (isNonScrolling(props.preset)) {
-    return <ScreenWithoutScrolling {...props} ref={ref as React.ForwardedRef<KeyboardAvoidingView>} />
-  } else {
-    return <ScreenWithScrolling {...props} ref={ref as React.ForwardedRef<ScrollView>} />
-  }
-})
-
-const dummy = [{ key: '0' }];
-const VirtualizedView = forwardRef<FlatList, ScrollViewProps>((props, ref) => {
-  return (
-    <FlatList
-      {...props}
-      ref={ref}
-      nestedScrollEnabled={true}
-      data={dummy}
-      // ListEmptyComponent={null}
-      // keyExtractor={() => "dummy"}
-      renderItem={undefined}
-      ListHeaderComponent={<>{props.children}</>}
-    />
-  )
-})
+export const Screen = forwardRef<KeyboardAvoidingView | ScrollView | FlatList, ScreenProps>(
+  (props, ref) => {
+    if (props.preset === "virtualized") {
+      return <ScreenWithVirtualization {...props} ref={ref as React.ForwardedRef<FlatList>} />
+    } else if (isNonScrolling(props.preset)) {
+      return (
+        <ScreenWithoutScrolling {...props} ref={ref as React.ForwardedRef<KeyboardAvoidingView>} />
+      )
+    } else {
+      return <ScreenWithScrolling {...props} ref={ref as React.ForwardedRef<ScrollView>} />
+    }
+  },
+)

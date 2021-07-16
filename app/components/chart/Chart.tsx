@@ -1,7 +1,6 @@
 import { AntDesign } from "@expo/vector-icons"
 import { Flex, Spinner } from "native-base"
-import React, { FC, useMemo, memo } from "react"
-import { useCallback } from "react"
+import React, { FC, useMemo, memo, useCallback } from "react"
 import { ViewStyle } from "react-native"
 import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
 import { Select } from "../../components/select/Select"
@@ -33,31 +32,38 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     return symbols.filter((item) => item.name.toLowerCase().startsWith(filterText.toLowerCase()))
   }, [filterText])
 
-  const chartData = useMemo(() => selectedSymbol
-    ? forecastStore.getForecast(selectedSymbol)?.historical || []
-    : [], [selectedSymbol]);
+  const chartData = useMemo(
+    () => (selectedSymbol ? forecastStore.getForecast(selectedSymbol)?.historical || [] : []),
+    [selectedSymbol],
+  )
 
-  const onSelectedItemChange = useCallback((value: string) => {
-    if (value) {
-      const snapshot = forecastStore.getForecast(value)
-      if (snapshot && Date.now() - snapshot.fetchedAt < dataMaxAge * 1000) {
-        setSelectedSymbol(value)
-      } else {
-        setSelectedSymbol("")
-        forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
+  const onSelectedItemChange = useCallback(
+    (value: string) => {
+      if (value) {
+        const snapshot = forecastStore.getForecast(value)
+        if (snapshot && Date.now() - snapshot.fetchedAt < dataMaxAge * 1000) {
+          setSelectedSymbol(value)
+        } else {
+          setSelectedSymbol("")
+          forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
+        }
       }
-    }
-  }, [forecastStore, setSelectedSymbol])
+    },
+    [forecastStore, setSelectedSymbol],
+  )
 
   const getOption = useCallback((item: SymbolSnapshot) => item.name, [])
 
-  const toggleIcon = useCallback((e: { isOpen: boolean }) => {
-    return e.isOpen ? (
-      <AntDesign name="up" size={16} color={color.dim} style={ICON} />
-    ) : (
-      <AntDesign name="down" size={16} color={color.dim} style={ICON} />
-    )
-  }, [color])
+  const toggleIcon = useCallback(
+    (e: { isOpen: boolean }) => {
+      return e.isOpen ? (
+        <AntDesign name="up" size={16} color={color.dim} style={ICON} />
+      ) : (
+        <AntDesign name="down" size={16} color={color.dim} style={ICON} />
+      )
+    },
+    [color],
+  )
 
   return (
     <>
@@ -101,7 +107,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
               ticks: { stroke: "dimgray", size: 5 },
               tickLabels: { fill: "dimgray" },
             }}
-            tickFormat={(tick: string) => (typeof tick === "string" ? tick.substring(0, 7) : '')}
+            tickFormat={(tick: string) => (typeof tick === "string" ? tick.substring(0, 7) : "")}
             tickCount={4}
           />
           <VictoryAxis
@@ -111,7 +117,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
               ticks: { stroke: "dimgray", size: 5 },
               tickLabels: { fill: "dimgray" },
             }}
-            tickFormat={chartData.length > 0 ? undefined : (tick: string) => ''}
+            tickFormat={chartData.length > 0 ? undefined : (_tick: string) => ""}
           />
         </VictoryChart>
       )}
@@ -119,4 +125,4 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
   )
 }
 
-export const Chart = memo(ChartInternal);
+export const Chart = memo(ChartInternal)

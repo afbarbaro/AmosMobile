@@ -7,10 +7,11 @@ import { ComboBoxState, useComboBoxState } from "@react-stately/combobox"
 import { Box, Input, Pressable, Text, themeTools, useThemeProps } from "native-base"
 import type {
   IComboBoxProps,
-  ITypeaheadProps
+  ITypeaheadProps,
 } from "native-base/lib/typescript/components/composites/Typeahead/types"
 import React from "react"
-import { findNodeHandle, FlatList, Platform, ScrollView, TextInput, TextInputProps } from "react-native"
+import { findNodeHandle, Platform, TextInput, TextInputProps } from "react-native"
+import BigList from "react-native-big-list"
 import { spacing } from "../../theme"
 
 // eslint-disable-next-line react/display-name
@@ -26,8 +27,8 @@ export const Select = React.forwardRef(
       numberOfItems,
       ...rest
     }: ITypeaheadProps & { labelInline?: boolean } & Partial<
-      Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
-    >,
+        Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
+      >,
     ref?: any,
   ) => {
     return (
@@ -51,8 +52,8 @@ export const Select = React.forwardRef(
           const optionKey = getOptionKey
             ? getOptionKey(item)
             : item.id !== undefined
-              ? item.id
-              : optionLabel
+            ? item.id
+            : optionLabel
 
           return (
             <Item textValue={optionLabel} key={optionKey}>
@@ -179,9 +180,9 @@ const ComboBoxImplementation = React.forwardRef(
           </Pressable>
         }
         onEndEditing={(e) => {
-          const text = e.nativeEvent.text;
-          const selected = state.selectionManager.firstSelectedKey;
-          const firstKey = state.collection.getFirstKey();
+          const text = e.nativeEvent.text
+          const selected = state.selectionManager.firstSelectedKey
+          const firstKey = state.collection.getFirstKey()
           if (text && !selected && firstKey) {
             state.selectionManager.select(firstKey)
           }
@@ -259,10 +260,12 @@ function ListBoxPopup(props: IListBoxProps) {
 
   return (
     <Box ref={popoverRef}>
-      <Box position="absolute" width="100%" maxHeight={dropdownHeight ?? 200}>
-        {/* <FlatList
+      <Box position="absolute" width="100%" maxHeight={dropdownHeight ?? 250}>
+        <BigList
           {...listBoxProps}
-          keyboardShouldPersistTaps="handled"
+          style={{ height: dropdownHeight ?? 250 }}
+          itemHeight={32}
+          windowSize={10}
           ref={(node) => {
             if (Platform.OS === "web") {
               listBoxRef.current = findNodeHandle(node)
@@ -271,26 +274,10 @@ function ListBoxPopup(props: IListBoxProps) {
             }
           }}
           data={[...state.collection]}
-          renderItem=
-          {(i) => (
-            <Option key={i.item.key} item={i.item} state={state} inputRef={inputRef} />
-          )}
-        /> */}
-        <ScrollView
-          {...listBoxProps}
-          keyboardShouldPersistTaps="handled"
-          ref={(node) => {
-            if (Platform.OS === "web") {
-              listBoxRef.current = findNodeHandle(node)
-            } else {
-              listBoxRef.current = node
-            }
+          renderItem={(i) => {
+            return <Option key={i.item.key} item={i.item} state={state} inputRef={inputRef} />
           }}
-        >
-          {[...state.collection].map((item) => (
-            <Option key={item.key} item={item} state={state} inputRef={inputRef} />
-          ))}
-        </ScrollView>
+        />
       </Box>
     </Box>
   )

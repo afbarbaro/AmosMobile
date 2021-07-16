@@ -9,9 +9,6 @@ import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
 import { palette, spacing } from "../../theme"
 
-
-
-
 const FULL: ViewStyle = {
   flex: 1,
 }
@@ -50,7 +47,7 @@ export const ChartsScreen = observer(function ChartsScreen() {
     symbolStore.getSymbols()
   }, [])
 
-  const screenRef = useRef(null);
+  const screenRef = useRef(null)
 
   return (
     <View testID="ChartsScreen" style={FULL}>
@@ -68,15 +65,16 @@ export const ChartsScreen = observer(function ChartsScreen() {
   )
 })
 
-export const chartList = (symbols: SymbolSnapshot[], screenRef: RefObject<FlatList<unknown>>): React.ReactChild[] => {
+export const chartList = (
+  symbols: SymbolSnapshot[],
+  screenRef: RefObject<FlatList<unknown>>,
+): React.ReactChild[] => {
   const [charts, setCharts] = useState(1)
-  const scrollToEnd = useRef(false);
+  const scrollToEnd = useRef(false)
 
-  const components: React.ReactElement[] = [];
+  const components: React.ReactElement[] = []
   for (let chart = 0; chart < charts; chart++) {
-    components.push(
-      <Chart key={chart} symbols={symbols}></Chart>
-    )
+    components.push(<Chart key={chart} symbols={symbols}></Chart>)
   }
 
   useEffect(() => {
@@ -89,15 +87,15 @@ export const chartList = (symbols: SymbolSnapshot[], screenRef: RefObject<FlatLi
 
   components.push(
     <Button
-      key='add-chart'
+      key="add-chart"
       style={BUTTON}
       textStyle={BUTTON_TEXT}
       tx="chartsScreen.addChart"
       onPress={() => {
-        scrollToEnd.current = true;
+        scrollToEnd.current = true
         setCharts(charts + 1)
       }}
-    />
+    />,
   )
 
   return components
