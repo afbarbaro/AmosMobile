@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
 import React, { RefObject, useCallback, useEffect, useRef, useState } from "react"
-import { TextStyle, View, ViewStyle } from "react-native"
-import { FlatList } from "react-native-gesture-handler"
-import { Button, Header, Screen } from "../../components"
+import { FlatList, TextStyle, View, ViewStyle } from "react-native"
+import { Header, Screen } from "../../components"
 import { Chart } from "../../components/chart/Chart"
+import { SwipeableRow } from "../../components/swipeable/swipeable-row"
 import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
 import { palette, spacing } from "../../theme"
@@ -26,18 +26,7 @@ const HEADER_TITLE: TextStyle = {
   lineHeight: 15,
   textAlign: "center",
 }
-const BUTTON: ViewStyle = {
-  marginLeft: spacing[6],
-  marginRight: spacing[6],
-  paddingVertical: spacing[3],
-  paddingHorizontal: spacing[3],
-  backgroundColor: "lightsteelblue",
-}
-const BUTTON_TEXT: TextStyle = {
-  fontWeight: "bold",
-  fontSize: 13,
-  letterSpacing: 2,
-}
+
 export const ChartsScreen = observer(function ChartsScreen() {
   const navigation = useNavigation()
   const goBack = useCallback(() => navigation.goBack(), [navigation])
@@ -69,34 +58,46 @@ export const chartList = (
   symbols: SymbolSnapshot[],
   screenRef: RefObject<FlatList<unknown>>,
 ): React.ReactChild[] => {
-  const [charts, setCharts] = useState(1)
+  const [actionNumber, setActionNumber] = useState(0)
+  const charts = useRef<number[]>([0])
   const scrollToEnd = useRef(false)
 
+  const deleteChart = (atKey: number) => () => {
+    const index = charts.current.findIndex((key) => key === atKey)
+    charts.current.splice(index, 1)
+    setActionNumber(actionNumber + 1)
+  }
+
+  const addChart = (afterKey: number) => () => {
+    const index = charts.current.findIndex((key) => key === afterKey) + 1
+    scrollToEnd.current = index === charts.current.length
+    charts.current.splice(index, 0, actionNumber + 1)
+    setActionNumber(actionNumber + 1)
+  }
+
   const components: React.ReactElement[] = []
-  for (let chart = 0; chart < charts; chart++) {
-    components.push(<Chart key={chart} symbols={symbols}></Chart>)
+  const firstKey = charts.current[0]
+  for (const key of charts.current) {
+    const canDelete = charts.current.length > 1 || key !== firstKey
+    components.push(
+      <SwipeableRow
+        key={key}
+        leftActionIcon="add-circle"
+        rightActionIcon={canDelete ? "trash-bin" : undefined}
+        leftAction={addChart(Number(key))}
+        rightAction={canDelete ? deleteChart(key) : undefined}
+      >
+        <Chart symbols={symbols}></Chart>
+      </SwipeableRow>,
+    )
   }
 
   useEffect(() => {
     if (scrollToEnd.current) {
       scrollToEnd.current = false
       screenRef.current?.scrollToEnd({ animated: false })
-      // screenRef.current?.scrollToIndex({ index: 0, animated: false })
     }
   })
-
-  components.push(
-    <Button
-      key="add-chart"
-      style={BUTTON}
-      textStyle={BUTTON_TEXT}
-      tx="chartsScreen.addChart"
-      onPress={() => {
-        scrollToEnd.current = true
-        setCharts(charts + 1)
-      }}
-    />,
-  )
 
   return components
 }

@@ -9,7 +9,7 @@ import type {
   IComboBoxProps,
   ITypeaheadProps,
 } from "native-base/lib/typescript/components/composites/Typeahead/types"
-import React from "react"
+import React, { useState } from "react"
 import { findNodeHandle, Platform, TextInput, TextInputProps } from "react-native"
 import BigList from "react-native-big-list"
 import { spacing } from "../../theme"
@@ -23,19 +23,30 @@ export const Select = React.forwardRef(
       renderItem,
       getOptionLabel,
       getOptionKey,
-      onChange,
       numberOfItems,
       ...rest
-    }: ITypeaheadProps & { labelInline?: boolean } & Partial<
+    }: Omit<ITypeaheadProps, "onChange"> & { labelInline?: boolean } & Partial<
         Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
       >,
     ref?: any,
   ) => {
+    const [items, setItems] = useState(
+      numberOfItems !== undefined ? options.slice(0, numberOfItems) : options,
+    )
+    const onChange = (filterText: string) => {
+      const origItems = numberOfItems !== undefined ? options.slice(0, numberOfItems) : options
+      setItems(
+        origItems.filter(
+          (item) => !filterText || item.name.toLowerCase().startsWith(filterText.toLowerCase()),
+        ),
+      )
+    }
+
     return (
       <ComboBoxImplementation
         {...rest}
         onSelectionChange={onSelectedItemChange}
-        items={numberOfItems !== undefined ? options.slice(0, numberOfItems) : options}
+        items={items}
         onInputChange={onChange}
         ref={ref}
       >
@@ -164,8 +175,14 @@ const ComboBoxImplementation = React.forwardRef(
         paddingTop={1}
         paddingBottom={1}
         {...inputProps}
+        _focus={{ borderColor: "gray.200" }}
+        autoCorrect={false}
+        autoCapitalize="none"
+        borderColor="gray.100"
+        backgroundColor="gray.100"
         placeholder={props.placeholder}
         ref={inputRef}
+        clearButtonMode="while-editing"
         InputLeftElement={
           <AntDesign
             name="search1"

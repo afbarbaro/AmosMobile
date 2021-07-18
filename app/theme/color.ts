@@ -44,6 +44,16 @@ const ColorRoles = [
    * Error messages and icons.
    */
   "error",
+
+  /**
+   * Add background color
+   */
+  "add",
+
+  /**
+   * Delete background color
+   */
+  "delete",
 ] as const
 
 export type AppColor = Record<typeof ColorRoles[number], string>
@@ -62,6 +72,8 @@ export const palette = {
   angry: "#dd3333",
   deepPurple: "#5D2555",
   transparent: "rgba(0, 0, 0, 0)",
+  emerald: { 700: "#047857" },
+  red: { 700: "#b91c1c" },
 }
 
 export const light: AppColor = {
@@ -73,6 +85,8 @@ export const light: AppColor = {
   text: palette.black,
   dim: palette.lightGrey,
   error: palette.angry,
+  add: palette.emerald[700],
+  delete: palette.red[700],
 }
 
 export const dark: AppColor = {
@@ -84,6 +98,8 @@ export const dark: AppColor = {
   text: palette.white,
   dim: palette.lightGrey,
   error: palette.angry,
+  add: palette.emerald[700],
+  delete: palette.red[700],
 }
 
 export const useAppColor = (): AppColor => {
