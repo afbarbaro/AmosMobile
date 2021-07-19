@@ -38,7 +38,7 @@ const ScreenWithoutScrolling = forwardRef<KeyboardAvoidingView, ScreenProps>((pr
   const preset = presets.fixed
   const style = props.style || {}
   const backgroundStyle = { backgroundColor: props.backgroundColor ?? color.background }
-  const insetStyle = { paddingTop: props.unsafe ? 0 : insets.top }
+  const insetStyle = { paddingTop: props.unsafe ? 0 : Math.ceil(insets.top / 2) }
 
   return (
     <KeyboardAvoidingView
@@ -47,7 +47,7 @@ const ScreenWithoutScrolling = forwardRef<KeyboardAvoidingView, ScreenProps>((pr
       behavior={isIos ? "padding" : undefined}
       keyboardVerticalOffset={offsets[props.keyboardOffset || "none"]}
     >
-      <StatusBar barStyle={props.statusBar || "light-content"} />
+      <StatusBar barStyle={props.statusBar} />
       <View style={[preset.inner, style, insetStyle]}>{props.children}</View>
     </KeyboardAvoidingView>
   )
@@ -59,7 +59,7 @@ const ScreenWithScrolling = forwardRef<ScrollView, ScreenProps>((props, ref) => 
   const preset = presets.scroll
   const style = props.style || {}
   const backgroundStyle = { backgroundColor: props.backgroundColor ?? color.background }
-  const insetStyle = { paddingTop: props.unsafe ? 0 : insets.top }
+  const insetStyle = { paddingTop: props.unsafe ? 0 : Math.ceil(insets.top / 2) }
 
   return (
     <KeyboardAvoidingView
@@ -67,7 +67,7 @@ const ScreenWithScrolling = forwardRef<ScrollView, ScreenProps>((props, ref) => 
       behavior={isIos ? "padding" : undefined}
       keyboardVerticalOffset={offsets[props.keyboardOffset || "none"]}
     >
-      <StatusBar barStyle={props.statusBar || "light-content"} />
+      <StatusBar barStyle={props.statusBar} />
       <View style={[preset.outer, backgroundStyle, insetStyle]}>
         <ScrollView
           ref={ref}
@@ -88,8 +88,9 @@ const ScreenWithVirtualization = forwardRef<FlatList, ScreenProps>((props, ref) 
   const insets = useSafeAreaInsets()
   const preset = presets.scroll
   const style = props.style || {}
+
   const backgroundStyle = { backgroundColor: props.backgroundColor ?? color.background }
-  const insetStyle = { paddingTop: props.unsafe ? 0 : insets.top }
+  const insetStyle = { paddingTop: props.unsafe ? 0 : Math.ceil(insets.top / 2) }
 
   return (
     <KeyboardAvoidingView
@@ -97,7 +98,7 @@ const ScreenWithVirtualization = forwardRef<FlatList, ScreenProps>((props, ref) 
       behavior={isIos ? "padding" : undefined}
       keyboardVerticalOffset={offsets[props.keyboardOffset || "none"]}
     >
-      <StatusBar barStyle={props.statusBar || "light-content"} />
+      <StatusBar barStyle={props.statusBar} />
       <View style={[preset.outer, backgroundStyle, insetStyle]}>
         <VirtualizedView
           ref={ref}

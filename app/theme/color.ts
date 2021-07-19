@@ -72,6 +72,7 @@ export const palette = {
   angry: "#dd3333",
   deepPurple: "#5D2555",
   transparent: "rgba(0, 0, 0, 0)",
+  steelBlue: "steelblue",
   emerald: { 700: "#047857" },
   red: { 700: "#b91c1c" },
 }

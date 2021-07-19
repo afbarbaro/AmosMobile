@@ -1,36 +1,17 @@
-import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
-import React, { RefObject, useCallback, useEffect, useRef, useState } from "react"
-import { FlatList, TextStyle, View, ViewStyle } from "react-native"
-import { Header, Screen } from "../../components"
+import React, { RefObject, useEffect, useRef, useState } from "react"
+import { FlatList, View, ViewStyle } from "react-native"
+import { Screen } from "../../components"
 import { Chart } from "../../components/chart/Chart"
 import { SwipeableRow } from "../../components/swipeable/swipeable-row"
 import { useStores } from "../../models"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
-import { palette, spacing } from "../../theme"
 
 const FULL: ViewStyle = {
   flex: 1,
 }
-const CONTAINER: ViewStyle = {
-  backgroundColor: palette.transparent,
-}
-const HEADER: TextStyle = {
-  paddingBottom: spacing[5] - 1,
-  paddingTop: spacing[3],
-}
-const HEADER_TITLE: TextStyle = {
-  fontSize: 12,
-  fontWeight: "bold",
-  letterSpacing: 1.5,
-  lineHeight: 15,
-  textAlign: "center",
-}
 
 export const ChartsScreen = observer(function ChartsScreen() {
-  const navigation = useNavigation()
-  const goBack = useCallback(() => navigation.goBack(), [navigation])
-
   const { symbolStore } = useStores()
   useEffect(() => {
     symbolStore.getSymbols()
@@ -40,14 +21,7 @@ export const ChartsScreen = observer(function ChartsScreen() {
 
   return (
     <View testID="ChartsScreen" style={FULL}>
-      <Screen style={CONTAINER} preset="scroll" ref={screenRef}>
-        <Header
-          headerTx="chartsScreen.title"
-          leftIcon="back"
-          onLeftPress={goBack}
-          style={HEADER}
-          titleStyle={HEADER_TITLE}
-        />
+      <Screen preset="scroll" ref={screenRef}>
         {chartList(symbolStore.symbols, screenRef)}
       </Screen>
     </View>

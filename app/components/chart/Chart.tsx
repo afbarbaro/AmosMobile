@@ -104,8 +104,8 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         <>
           <HorizonChooser horizon={horizon} setHorizon={setHorizon} />
           <VictoryChart
-            height={windowWidth * 0.7}
-            padding={{ top: 5, bottom: 70, left: 70, right: 50 }}
+            height={Math.ceil((windowWidth * 2) / 3)}
+            padding={{ top: 10, bottom: 65, left: 70, right: 50 }}
             containerComponent={<VictoryContainer style={GRAPH} />}
           >
             <VictoryLine

@@ -7,23 +7,58 @@
 import { AntDesign, Ionicons } from "@expo/vector-icons"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
+import { createStackNavigator } from "@react-navigation/stack"
 import React from "react"
-import { ChartsScreen } from "../screens"
-import { MainNavigator } from "./main-navigator"
+import { TextStyle } from "react-native"
+import { ChartsScreen, DemoScreen, WelcomeScreen } from "../screens"
 
-/**
- * This type allows TypeScript to know what routes are defined in this navigator
- * as well as what properties (if any) they might take when navigating to them.
- *
- * We recommend using MobX-State-Tree store(s) to handle state rather than navigation params.
- *
- * For more information, see this documentation:
- *   https://reactnavigation.org/docs/params/
- *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
- */
-export type RootParamList = {
-  mainStack: undefined
+const HEADER_TITLE: TextStyle = {
+  fontSize: 12,
+  fontWeight: "bold",
+  letterSpacing: 1,
+  lineHeight: 15,
+  textAlign: "center",
+  padding: 0,
 }
+
+const HomeStack = createStackNavigator()
+const HomeStackScreens = () => (
+  <HomeStack.Navigator
+    screenOptions={{
+      headerShown: false,
+      headerTitleStyle: HEADER_TITLE,
+    }}
+  >
+    <HomeStack.Screen name="Welcome" component={WelcomeScreen} />
+    <HomeStack.Screen name="Demo" component={DemoScreen} />
+  </HomeStack.Navigator>
+)
+
+const ChartsStack = createStackNavigator()
+const ChartsStackScreens = () => (
+  <ChartsStack.Navigator
+    screenOptions={{
+      title: "CHARTS",
+      headerShown: true,
+      headerTitleStyle: HEADER_TITLE,
+    }}
+  >
+    <ChartsStack.Screen name="Charts" component={ChartsScreen} />
+  </ChartsStack.Navigator>
+)
+
+const SettingsStack = createStackNavigator()
+const SettingsStackScreens = () => (
+  <SettingsStack.Navigator
+    screenOptions={{
+      title: "SETTINGS",
+      headerShown: true,
+      headerTitleStyle: HEADER_TITLE,
+    }}
+  >
+    <SettingsStack.Screen name="Settings" component={DemoScreen} />
+  </SettingsStack.Navigator>
+)
 
 const Tab = createBottomTabNavigator()
 
@@ -31,8 +66,8 @@ const RootTabNavigator = () => {
   return (
     <Tab.Navigator tabBarOptions={{ showLabel: false }}>
       <Tab.Screen
-        name="home"
-        component={MainNavigator}
+        name="Home"
+        component={HomeStackScreens}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color, focused: _focused, size }) => (
@@ -41,8 +76,8 @@ const RootTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="charts"
-        component={ChartsScreen}
+        name="Charts"
+        component={ChartsStackScreens}
         options={{
           tabBarLabel: "Charts",
           tabBarIcon: ({ color, focused: _focused, size }) => (
@@ -51,8 +86,8 @@ const RootTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="settings"
-        component={MainNavigator}
+        name="Settings"
+        component={SettingsStackScreens}
         options={{
           tabBarLabel: "Settings",
           tabBarIcon: ({ color, focused: _focused, size }) => (
@@ -86,5 +121,5 @@ RootNavigator.displayName = "RootNavigator"
  *
  * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
  */
-const exitRoutes = ["welcome"]
+const exitRoutes = ["Welcome"]
 export const canExit = (routeName: string) => exitRoutes.includes(routeName)

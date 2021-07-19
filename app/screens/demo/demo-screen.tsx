@@ -84,7 +84,6 @@ const platformCommand = Platform.select({
 
 export const DemoScreen = observer(function DemoScreen() {
   const navigation = useNavigation()
-  const goBack = () => navigation.goBack()
 
   const demoReactotron = React.useMemo(
     () => async () => {
@@ -120,11 +119,11 @@ export const DemoScreen = observer(function DemoScreen() {
 
   return (
     <View testID="DemoScreen" style={FULL}>
-      <Screen style={CONTAINER} preset="scroll">
+      <Screen style={CONTAINER} preset="fixed">
         <Header
           headerTx="demoScreen.howTo"
           leftIcon="back"
-          onLeftPress={goBack}
+          onLeftPress={navigation.goBack}
           style={HEADER}
           titleStyle={HEADER_TITLE}
         />
