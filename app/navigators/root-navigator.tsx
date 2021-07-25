@@ -25,12 +25,13 @@ const HomeStack = createStackNavigator()
 const HomeStackScreens = () => (
   <HomeStack.Navigator
     screenOptions={{
-      headerShown: false,
+      title: "HOME",
+      headerShown: true,
       headerTitleStyle: HEADER_TITLE,
     }}
   >
-    <HomeStack.Screen name="Welcome" component={WelcomeScreen} />
-    <HomeStack.Screen name="Demo" component={DemoScreen} />
+    <HomeStack.Screen name="Home" component={WelcomeScreen} />
+    {/* <HomeStack.Screen name="Demo" component={DemoScreen} /> */}
   </HomeStack.Navigator>
 )
 

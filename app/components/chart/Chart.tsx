@@ -1,10 +1,11 @@
 import { AntDesign } from "@expo/vector-icons"
-import { Button, Flex, Spinner } from "native-base"
+import { Button, Flex, Spinner, theme } from "native-base"
 import React, { FC, memo, useCallback, useMemo, useState } from "react"
 import { useWindowDimensions, View, ViewStyle } from "react-native"
 import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
 import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
+import { TimeseriesSnapshot } from "../../models/forecast/forecast"
 import { SymbolSnapshot } from "../../models/symbol/symbol"
 import { palette, spacing, useAppColor } from "../../theme"
 
@@ -28,10 +29,17 @@ const TIME_HORIZON = {
   _pressed: { backgroundColor: "gray.200", _text: { color: "gray.500", fontSize: "xs" } },
 } as const
 
+interface ChartData {
+  historical: TimeseriesSnapshot,
+  p10: TimeseriesSnapshot,
+  p50: TimeseriesSnapshot,
+  p90: TimeseriesSnapshot,
+}
 export interface ChartProps {
   symbols: SymbolSnapshot[]
   dataMaxAge?: number
 }
+
 const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
   const { forecastStore } = useStores()
   const color = useAppColor()
@@ -41,12 +49,21 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
   const [horizon, setHorizon] = useState("3M")
   const longHorizon = horizon === "ALL" || horizon.endsWith("Y")
 
-  const chartData = useMemo(() => {
-    const data = selectedSymbol ? forecastStore.getForecast(selectedSymbol)?.historical || [] : []
-    if (horizon === "ALL") return data
-    const startDate = toUTCDate(horizon)
-    const index = data.findIndex((datum) => datum.Timestamp === startDate)
-    return index >= 0 ? data.slice(index) : data
+  const chartData: ChartData = useMemo(() => {
+    const data = selectedSymbol ? forecastStore.getForecast(selectedSymbol) : undefined;
+    let historical: TimeseriesSnapshot = data ? data.historical || [] : [];
+    if (horizon !== "ALL") {
+      const startDate = toUTCDate(horizon)
+      const index = historical.findIndex((datum) => datum.Timestamp === startDate)
+      historical = index >= 0 ? historical.slice(index) : historical
+    }
+    const lastHistorical = historical.length > 0 ? historical[historical.length - 1] : undefined
+    return {
+      historical,
+      p10: lastHistorical ? [lastHistorical, ...data?.predictions?.p10 || []] : data?.predictions?.p10 || [],
+      p50: lastHistorical ? [lastHistorical, ...data?.predictions?.p50 || []] : data?.predictions?.p50 || [],
+      p90: lastHistorical ? [lastHistorical, ...data?.predictions?.p90 || []] : data?.predictions?.p90 || [],
+    }
   }, [selectedSymbol, horizon])
 
   const onSelectedItemChange = useCallback(
@@ -109,10 +126,28 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
             containerComponent={<VictoryContainer style={GRAPH} />}
           >
             <VictoryLine
-              data={chartData}
+              data={chartData.historical}
               x="Timestamp"
               y="Value"
               style={{ data: { stroke: "steelblue" } }}
+            />
+            <VictoryLine
+              data={chartData.p50}
+              x="Timestamp"
+              y="Value"
+              style={{ data: { stroke: theme.colors.rose[700] } }}
+            />
+            <VictoryLine
+              data={chartData.p10}
+              x="Timestamp"
+              y="Value"
+              style={{ data: { stroke: theme.colors.rose[200] } }}
+            />
+            <VictoryLine
+              data={chartData.p90}
+              x="Timestamp"
+              y="Value"
+              style={{ data: { stroke: theme.colors.rose[200] } }}
             />
             <VictoryAxis
               crossAxis
@@ -135,7 +170,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
                 ticks: { stroke: "dimgray", size: 5 },
                 tickLabels: { fill: "dimgray" },
               }}
-              tickFormat={chartData.length > 0 ? undefined : (_tick: string) => ""}
+              tickFormat={chartData.historical.length > 0 ? undefined : (_tick: string) => ""}
             />
           </VictoryChart>
         </>
