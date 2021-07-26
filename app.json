@@ -21,6 +21,8 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "description": "Amos Predictor for Stocks, ETFs, and Crypto prices",
+    "githubUrl": "https://github.com/afbarbaro/AmosMobile"
   }
 }

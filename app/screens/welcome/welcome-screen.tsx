@@ -38,6 +38,7 @@ const CONTENT: TextStyle = {
 
 export const WelcomeScreen = observer(function WelcomeScreen() {
   const dimensions = useWindowDimensions();
+
   return (
     <View testID="WelcomeScreen" style={FULL}>
       <Screen style={CONTAINER} preset="fixed">
@@ -46,7 +47,7 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
           <Text style={CONTENT}>
             A forecasting tool for Stock, ETF, and Crypto prices, powered by a machine-learning algorithm using historical data.
           </Text>
-          <Image source={chartPicture} resizeMode="center" style={{
+          <Image source={chartPicture} resizeMode="cover" style={{
             ...IMAGE,
             width: dimensions.width,
             height: dimensions.width * (320 / 390)
