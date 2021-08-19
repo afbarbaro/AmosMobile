@@ -82,7 +82,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     const accuracy: { Timestamp: string, p10: number, p50: number, p90: number }[] = [];
     if (chartRawData.accuracy) {
       for (const date in chartRawData.accuracy.band) {
-        const values = chartRawData.accuracy.band[date]!;
+        const values = chartRawData.accuracy.band[date] || [];
         accuracy.push({ Timestamp: date, p10: values[0], p50: values[1], p90: values[2] });
       }
     }
@@ -154,7 +154,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
           <HorizonChooser horizon={horizon} setHorizon={setHorizon} />
           <VictoryChart
             height={Math.ceil((windowWidth * 2) / 3)}
-            padding={{ top: 10, bottom: 65, left: 70, right: 50 }}
+            padding={{ top: 5, bottom: 65, left: 70, right: 50 }}
             containerComponent={<VictoryContainer style={GRAPH} />}
           >
             <VictoryLine
@@ -229,7 +229,7 @@ const HorizonChooser: FC<HorizonChooserProps> = ({ horizon, setHorizon }) => {
     <Button.Group
       zIndex={-1}
       pt={1}
-      pb={1}
+      pb={0}
       pl={spacing[2]}
       pr={spacing[2]}
       justifyContent="space-between"
