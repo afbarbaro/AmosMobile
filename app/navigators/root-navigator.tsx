@@ -10,7 +10,7 @@ import { NavigationContainer, NavigationContainerRef } from "@react-navigation/n
 import { createStackNavigator } from "@react-navigation/stack"
 import React from "react"
 import { TextStyle } from "react-native"
-import { ChartsScreen, DemoScreen, WelcomeScreen } from "../screens"
+import { ChartsScreen, SettingsScreen, WelcomeScreen } from "../screens"
 
 const HEADER_TITLE: TextStyle = {
   fontSize: 12,
@@ -31,7 +31,6 @@ const HomeStackScreens = () => (
     }}
   >
     <HomeStack.Screen name="Home" component={WelcomeScreen} />
-    {/* <HomeStack.Screen name="Demo" component={DemoScreen} /> */}
   </HomeStack.Navigator>
 )
 
@@ -57,7 +56,7 @@ const SettingsStackScreens = () => (
       headerTitleStyle: HEADER_TITLE,
     }}
   >
-    <SettingsStack.Screen name="Settings" component={DemoScreen} />
+    <SettingsStack.Screen name="Settings" component={SettingsScreen} />
   </SettingsStack.Navigator>
 )
 

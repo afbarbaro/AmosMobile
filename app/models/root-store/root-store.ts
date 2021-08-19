@@ -1,4 +1,5 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { AccuracyStoreModel } from "../accuracy/accuracy-store"
 import { ForecastStoreModel } from "../forecast/forecast-store"
 import { SymbolStoreModel } from "../symbol/symbol-store"
 
@@ -8,6 +9,7 @@ import { SymbolStoreModel } from "../symbol/symbol-store"
 export const RootStoreModel = types.model("RootStore").props({
   symbolStore: types.optional(SymbolStoreModel, {}),
   forecastStore: types.optional(ForecastStoreModel, {}),
+  accuracyStore: types.optional(AccuracyStoreModel, {}),
 })
 
 /**

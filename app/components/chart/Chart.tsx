@@ -2,7 +2,7 @@ import { AntDesign } from "@expo/vector-icons"
 import { Button, Flex, Spinner, theme } from "native-base"
 import React, { FC, memo, useCallback, useMemo, useState } from "react"
 import { useWindowDimensions, View, ViewStyle } from "react-native"
-import { VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
+import { VictoryArea, VictoryAxis, VictoryChart, VictoryContainer, VictoryLine } from "victory-native"
 import { Select } from "../../components/select/Select"
 import { useStores } from "../../models"
 import { TimeseriesSnapshot } from "../../models/forecast/forecast"
@@ -23,17 +23,17 @@ const GRAPH = {
 } as const
 
 const TIME_HORIZON = {
-  padding: 1,
+  padding: 1.5,
   variant: "ghost",
-  _text: { fontSize: "xs", color: "gray.400", fontWeight: "normal" },
+  _text: { fontSize: "xs", color: "gray.500", fontWeight: "normal" },
   _pressed: { backgroundColor: "gray.200", _text: { color: "gray.500", fontSize: "xs" } },
 } as const
 
 interface ChartData {
   historical: TimeseriesSnapshot,
-  p10: TimeseriesSnapshot,
   p50: TimeseriesSnapshot,
-  p90: TimeseriesSnapshot,
+  p1090: { Timestamp: string, p10: number, p90: number }[],
+  accuracy: { Timestamp: string, p10: number, p50: number, p90: number }[],
 }
 export interface ChartProps {
   symbols: SymbolSnapshot[]
@@ -41,16 +41,25 @@ export interface ChartProps {
 }
 
 const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
-  const { forecastStore } = useStores()
+  const { forecastStore, accuracyStore } = useStores()
   const color = useAppColor()
   const windowWidth = useWindowDimensions().width
 
   const [selectedSymbol, setSelectedSymbol] = React.useState<string | null>()
-  const [horizon, setHorizon] = useState("3M")
+  const [horizon, setHorizon] = useState("6M")
   const longHorizon = horizon === "ALL" || horizon.endsWith("Y")
 
-  const chartData: ChartData = useMemo(() => {
+  const chartRawData = useMemo(() => {
     const data = selectedSymbol ? forecastStore.getForecast(selectedSymbol) : undefined;
+    const accuracy = selectedSymbol ? accuracyStore.getAccuracy(selectedSymbol) : undefined;
+    return {
+      data,
+      accuracy
+    }
+  }, [selectedSymbol])
+
+  const chartData: ChartData = useMemo(() => {
+    const data = chartRawData.data;
     let historical: TimeseriesSnapshot = data ? data.historical || [] : [];
     if (horizon !== "ALL") {
       const startDate = toUTCDate(horizon)
@@ -58,11 +67,31 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
       historical = index >= 0 ? historical.slice(index) : historical
     }
     const lastHistorical = historical.length > 0 ? historical[historical.length - 1] : undefined
+    const p1090: { Timestamp: string, p10: number, p90: number }[] = [];
+    if (data?.predictions) {
+      const p10 = data.predictions.p10 || [];
+      const p90 = data.predictions.p90 || [];
+      if (lastHistorical)
+        p1090.push({ Timestamp: lastHistorical.Timestamp, p10: lastHistorical.Value, p90: lastHistorical.Value });
+
+      for (let i = 0; i < p10.length; i++) {
+        p1090.push({ Timestamp: p10[i].Timestamp, p10: p10[i].Value, p90: p90[i].Value });
+      }
+    }
+
+    const accuracy: { Timestamp: string, p10: number, p50: number, p90: number }[] = [];
+    if (chartRawData.accuracy) {
+      for (const date in chartRawData.accuracy.band) {
+        const values = chartRawData.accuracy.band[date]!;
+        accuracy.push({ Timestamp: date, p10: values[0], p50: values[1], p90: values[2] });
+      }
+    }
+
     return {
       historical,
-      p10: lastHistorical ? [lastHistorical, ...data?.predictions?.p10 || []] : data?.predictions?.p10 || [],
       p50: lastHistorical ? [lastHistorical, ...data?.predictions?.p50 || []] : data?.predictions?.p50 || [],
-      p90: lastHistorical ? [lastHistorical, ...data?.predictions?.p90 || []] : data?.predictions?.p90 || [],
+      p1090,
+      accuracy
     }
   }, [selectedSymbol, horizon])
 
@@ -74,7 +103,10 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
           setSelectedSymbol(value)
         } else {
           setSelectedSymbol("")
-          forecastStore.fetchForecast(value).then(() => setSelectedSymbol(value))
+          Promise.all([
+            forecastStore.fetchForecast(value),
+            accuracyStore.fetchAccuracy(value)
+          ]).then(() => setSelectedSymbol(value))
         }
       }
     },
@@ -131,30 +163,38 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
               y="Value"
               style={{ data: { stroke: "steelblue" } }}
             />
+            <VictoryArea
+              data={chartData.accuracy}
+              x="Timestamp"
+              y0="p10"
+              y="p90"
+              style={{ data: { fill: theme.colors.lightBlue[100] } }}
+            />
+            <VictoryLine
+              data={chartData.historical}
+              x="Timestamp"
+              y="Value"
+              style={{ data: { stroke: "steelblue" } }}
+            />
+            <VictoryArea
+              data={chartData.p1090}
+              x="Timestamp"
+              y0="p10"
+              y="p90"
+              style={{ data: { fill: theme.colors.blueGray[200] } }}
+            />
             <VictoryLine
               data={chartData.p50}
               x="Timestamp"
               y="Value"
-              style={{ data: { stroke: theme.colors.rose[700] } }}
-            />
-            <VictoryLine
-              data={chartData.p10}
-              x="Timestamp"
-              y="Value"
-              style={{ data: { stroke: theme.colors.rose[200] } }}
-            />
-            <VictoryLine
-              data={chartData.p90}
-              x="Timestamp"
-              y="Value"
-              style={{ data: { stroke: theme.colors.rose[200] } }}
+              style={{ data: { stroke: theme.colors.blueGray[600] } }}
             />
             <VictoryAxis
               crossAxis
               style={{
-                axis: { stroke: "dimgray" },
-                ticks: { stroke: "dimgray", size: 5 },
-                tickLabels: { fill: "dimgray" },
+                axis: { stroke: '' },
+                ticks: { stroke: "", size: 5 },
+                tickLabels: { fontWeight: "lighter", fill: "dimgray" },
               }}
               tickFormat={(tick: string) =>
                 typeof tick === "string"
@@ -166,9 +206,9 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
             <VictoryAxis
               dependentAxis
               style={{
-                axis: { stroke: "dimgray" },
-                ticks: { stroke: "dimgray", size: 5 },
-                tickLabels: { fill: "dimgray" },
+                axis: { stroke: "" },
+                ticks: { stroke: "", size: 5 },
+                tickLabels: { fontWeight: "lighter", fill: "dimgray" },
               }}
               tickFormat={chartData.historical.length > 0 ? undefined : (_tick: string) => ""}
             />
@@ -194,13 +234,12 @@ const HorizonChooser: FC<HorizonChooserProps> = ({ horizon, setHorizon }) => {
       pr={spacing[2]}
       justifyContent="space-between"
     >
-      <HorizonButton id="1W" active={horizon === "1W"} setActive={setHorizon} />
       <HorizonButton id="1M" active={horizon === "1M"} setActive={setHorizon} />
       <HorizonButton id="3M" active={horizon === "3M"} setActive={setHorizon} />
       <HorizonButton id="6M" active={horizon === "6M"} setActive={setHorizon} />
       <HorizonButton id="1Y" active={horizon === "1Y"} setActive={setHorizon} />
       <HorizonButton id="2Y" active={horizon === "2Y"} setActive={setHorizon} />
-      <HorizonButton id="10Y" active={horizon === "10Y"} setActive={setHorizon} />
+      <HorizonButton id="5Y" active={horizon === "5Y"} setActive={setHorizon} />
       <HorizonButton id="ALL" active={horizon === "ALL"} setActive={setHorizon} />
     </Button.Group>
   )
