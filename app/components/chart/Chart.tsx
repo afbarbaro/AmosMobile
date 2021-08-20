@@ -66,6 +66,9 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
       const index = historical.findIndex((datum) => datum.Timestamp === startDate)
       historical = index >= 0 ? historical.slice(index) : historical
     }
+    const filterFrequency = horizon.endsWith("Y") ? Math.min(Number(horizon[0]), 4) : horizon === "ALL" ? 5 : 1;
+    if (filterFrequency > 1) historical = historical.filter((_value, index) => index % filterFrequency === 0)
+
     const lastHistorical = historical.length > 0 ? historical[historical.length - 1] : undefined
     const p1090: { Timestamp: string, p10: number, p90: number }[] = [];
     if (data?.predictions) {
