@@ -129,6 +129,79 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     [color],
   )
 
+
+  const ChartComponents = [
+    <HorizonChooser key='chooser' horizon={horizon} setHorizon={setHorizon} />,
+    <VictoryChart key='chart'
+      height={Math.ceil((windowWidth * 2) / 3)}
+      padding={{ top: 5, bottom: 65, left: 70, right: 50 }}
+      containerComponent={<VictoryContainer style={GRAPH} />}
+    >
+      <VictoryLine
+        data={chartData.historical}
+        x="Timestamp"
+        y="Value"
+        style={{ data: { stroke: "steelblue" } }}
+      />
+      <VictoryArea
+        data={chartData.accuracy}
+        x="Timestamp"
+        y0="p10"
+        y="p90"
+        style={{ data: { fill: theme.colors.lightBlue[100] } }}
+      />
+      <VictoryLine
+        data={chartData.historical}
+        x="Timestamp"
+        y="Value"
+        style={{ data: { stroke: "steelblue" } }}
+      />
+      <VictoryArea
+        data={chartData.p1090}
+        x="Timestamp"
+        y0="p10"
+        y="p90"
+        style={{ data: { fill: theme.colors.blueGray[200] } }}
+      />
+      <VictoryLine
+        data={chartData.p50}
+        x="Timestamp"
+        y="Value"
+        style={{ data: { stroke: theme.colors.blueGray[600] } }}
+      />
+      <VictoryAxis
+        crossAxis
+        style={{
+          axis: { stroke: '' },
+          ticks: { stroke: "", size: 5 },
+          tickLabels: { fontWeight: "lighter", fill: "dimgray" },
+        }}
+        tickFormat={(tick: string) =>
+          typeof tick === "string"
+            ? tick.substring(longHorizon ? 0 : 6, longHorizon ? 7 : 10)
+            : ""
+        }
+        tickCount={4}
+      />
+      <VictoryAxis
+        dependentAxis
+        style={{
+          axis: { stroke: "" },
+          ticks: { stroke: "", size: 5 },
+          tickLabels: { fontWeight: "lighter", fill: "dimgray" },
+        }}
+        tickFormat={chartData.historical.length > 0 ? undefined : (_tick: string) => ""}
+      />
+    </VictoryChart>];
+  if (selectedSymbol === "") ChartComponents.push(<Spinner key='spinner' position="absolute" zIndex={99} />);
+
+  const ChartArea = selectedSymbol === "" ?
+    <Flex flex={1} justifyContent="center" alignItems="center" zIndex={-1}>
+      {ChartComponents}
+    </Flex>
+    : <>{ChartComponents}</>
+
+
   return (
     <View style={VIEW}>
       <Select
@@ -145,82 +218,11 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         // labelInline={false}
         toggleIcon={toggleIcon}
       />
-
-      {selectedSymbol === "" && (
-        <Flex flex={1} justifyContent="center" alignItems="center" zIndex={-1}>
-          <Spinner />
-        </Flex>
-      )}
-
-      {selectedSymbol !== "" && (
-        <>
-          <HorizonChooser horizon={horizon} setHorizon={setHorizon} />
-          <VictoryChart
-            height={Math.ceil((windowWidth * 2) / 3)}
-            padding={{ top: 5, bottom: 65, left: 70, right: 50 }}
-            containerComponent={<VictoryContainer style={GRAPH} />}
-          >
-            <VictoryLine
-              data={chartData.historical}
-              x="Timestamp"
-              y="Value"
-              style={{ data: { stroke: "steelblue" } }}
-            />
-            <VictoryArea
-              data={chartData.accuracy}
-              x="Timestamp"
-              y0="p10"
-              y="p90"
-              style={{ data: { fill: theme.colors.lightBlue[100] } }}
-            />
-            <VictoryLine
-              data={chartData.historical}
-              x="Timestamp"
-              y="Value"
-              style={{ data: { stroke: "steelblue" } }}
-            />
-            <VictoryArea
-              data={chartData.p1090}
-              x="Timestamp"
-              y0="p10"
-              y="p90"
-              style={{ data: { fill: theme.colors.blueGray[200] } }}
-            />
-            <VictoryLine
-              data={chartData.p50}
-              x="Timestamp"
-              y="Value"
-              style={{ data: { stroke: theme.colors.blueGray[600] } }}
-            />
-            <VictoryAxis
-              crossAxis
-              style={{
-                axis: { stroke: '' },
-                ticks: { stroke: "", size: 5 },
-                tickLabels: { fontWeight: "lighter", fill: "dimgray" },
-              }}
-              tickFormat={(tick: string) =>
-                typeof tick === "string"
-                  ? tick.substring(longHorizon ? 0 : 6, longHorizon ? 7 : 10)
-                  : ""
-              }
-              tickCount={4}
-            />
-            <VictoryAxis
-              dependentAxis
-              style={{
-                axis: { stroke: "" },
-                ticks: { stroke: "", size: 5 },
-                tickLabels: { fontWeight: "lighter", fill: "dimgray" },
-              }}
-              tickFormat={chartData.historical.length > 0 ? undefined : (_tick: string) => ""}
-            />
-          </VictoryChart>
-        </>
-      )}
+      {ChartArea}
     </View>
   )
 }
+
 
 type HorizonChooserProps = {
   horizon: string
