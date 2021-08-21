@@ -116,7 +116,8 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     [forecastStore, setSelectedSymbol],
   )
 
-  const getOption = useCallback((item: SymbolSnapshot) => item.name, [])
+  const getOptionKey = useCallback((item: SymbolSnapshot) => item.ticker, [])
+  const getOptionLabel = useCallback((item: SymbolSnapshot) => `${item.ticker} - ${item.name}`, [])
 
   const toggleIcon = useCallback(
     (e: { isOpen: boolean }) => {
@@ -211,8 +212,8 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         mr={spacing[2]}
         options={symbols}
         onSelectedItemChange={onSelectedItemChange}
-        getOptionKey={getOption}
-        getOptionLabel={getOption}
+        getOptionKey={getOptionKey}
+        getOptionLabel={getOptionLabel}
         // label="Symbol"
         // labelInline={false}
         toggleIcon={toggleIcon}

@@ -11,14 +11,14 @@ export class SymbolApi {
 
   async getSymbols(): Promise<{ kind: "ok"; symbols: SymbolSnapshot[] } | GeneralApiProblem> {
     // make the api call
-    return this.api.apisauce.get<string[]>("symbols").then((response) => {
+    return this.api.apisauce.get<SymbolSnapshot[]>("symbols").then((response) => {
       // the typical ways to die when calling an api
       if (!response.ok) {
         const problem = getGeneralApiProblem(response)
         if (problem) return problem
         else return { kind: "bad-data" }
       }
-      const symbols = response.data?.map((s) => ({ name: s })) || []
+      const symbols = response.data || []
       return { kind: "ok", symbols }
     })
   }

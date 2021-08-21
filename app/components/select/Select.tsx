@@ -26,19 +26,23 @@ export const Select = React.forwardRef(
       numberOfItems,
       ...rest
     }: Omit<ITypeaheadProps, "onChange"> & { labelInline?: boolean } & Partial<
-        Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
-      >,
+      Omit<TextInputProps, "onFocus" | "onBlur" | "onChange">
+    >,
     ref?: any,
   ) => {
     const [items, setItems] = useState(
       numberOfItems !== undefined ? options.slice(0, numberOfItems) : options,
     )
+
+    const label = getOptionLabel ?? ((i) => i.id)
+
     const onChange = (filterText: string) => {
       const origItems = numberOfItems !== undefined ? options.slice(0, numberOfItems) : options
       setItems(
-        origItems.filter(
-          (item) => !filterText || item.name.toLowerCase().startsWith(filterText.toLowerCase()),
-        ),
+        filterText ?
+          origItems.filter(
+            (item) => label(item).toUpperCase().includes(filterText.toUpperCase()))
+          : origItems
       )
     }
 
@@ -63,8 +67,8 @@ export const Select = React.forwardRef(
           const optionKey = getOptionKey
             ? getOptionKey(item)
             : item.id !== undefined
-            ? item.id
-            : optionLabel
+              ? item.id
+              : optionLabel
 
           return (
             <Item textValue={optionLabel} key={optionKey}>
