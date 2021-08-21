@@ -131,7 +131,6 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
 
 
   const ChartComponents = [
-    <HorizonChooser key='chooser' horizon={horizon} setHorizon={setHorizon} />,
     <VictoryChart key='chart'
       height={Math.ceil((windowWidth * 2) / 3)}
       padding={{ top: 5, bottom: 65, left: 70, right: 50 }}
@@ -218,6 +217,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         // labelInline={false}
         toggleIcon={toggleIcon}
       />
+      <HorizonChooser key='chooser' horizon={horizon} setHorizon={setHorizon} />
       {ChartArea}
     </View>
   )
