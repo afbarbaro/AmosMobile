@@ -53,7 +53,7 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
             height: dimensions.width * (320 / 390)
           }} />
           <Text style={CONTENT}>
-            Knowing the expected value trejectory and probable range of values can help you make better investment decisions and gain confidence in your portfolio allocation strategy.
+            Knowing the expected value trajectory and probable range of values can help you make better investment decisions and gain confidence in your portfolio allocation strategy.
           </Text>
         </SafeAreaView>
       </Screen>

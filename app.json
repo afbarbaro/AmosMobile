@@ -3,6 +3,7 @@
     "name": "AmosMobile",
     "slug": "AmosMobile",
     "version": "1.0.0",
+    "owner": "afb",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
