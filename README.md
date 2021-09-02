@@ -1,3 +1,9 @@
+# Mobile App (React Native) for Amos (Timeseries Forecasting using AWS Forecast)
+
+This is a simple mobile app that displays charts to visualize the historical and forecast (predicted) prices of Stocks, ETFs, and Crypto assets.
+The API layer is provided by serverless function running on AWS, and the underlying code is on this repo: https://github.com/afbarbaro/amos
+ 
+
 ## Running Storybook
 
 From the command line in your generated app's root directory, enter `yarn run storybook`
