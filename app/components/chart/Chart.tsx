@@ -69,6 +69,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
     const filterFrequency = horizon.endsWith("Y") ? Math.min(Number(horizon[0]), 4) : horizon === "ALL" ? 5 : 1;
     if (filterFrequency > 1) historical = historical.filter((_value, index) => index % filterFrequency === 0)
 
+    const firstHistoricalDate = historical.length > 0 ? Date.parse(historical[0].Timestamp) : 0
     const lastHistorical = historical.length > 0 ? historical[historical.length - 1] : undefined
     const p1090: { Timestamp: string, p10: number, p90: number }[] = [];
     if (data?.predictions) {
@@ -76,17 +77,23 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
       const p90 = data.predictions.p90 || [];
       if (lastHistorical)
         p1090.push({ Timestamp: lastHistorical.Timestamp, p10: lastHistorical.Value, p90: lastHistorical.Value });
+      if (p10[0].Timestamp !== lastHistorical?.Timestamp)
+        p1090.push({ Timestamp: p10[0].Timestamp, p10: p10[0].Value, p90: p90[0].Value });
 
-      for (let i = 0; i < p10.length; i++) {
+      for (let i = 1; i < p10.length; i++) {
         p1090.push({ Timestamp: p10[i].Timestamp, p10: p10[i].Value, p90: p90[i].Value });
       }
     }
 
     const accuracy: { Timestamp: string, p10: number, p50: number, p90: number }[] = [];
     if (chartRawData.accuracy) {
+      let afterFirstDate = false;
       for (const date in chartRawData.accuracy.band) {
-        const values = chartRawData.accuracy.band[date] || [];
-        accuracy.push({ Timestamp: date, p10: values[0], p50: values[1], p90: values[2] });
+        if (afterFirstDate || Date.parse(date) >= firstHistoricalDate) {
+          afterFirstDate = true;
+          const values = chartRawData.accuracy.band[date] || [];
+          accuracy.push({ Timestamp: date, p10: values[0], p50: values[1], p90: values[2] });
+        }
       }
     }
 
@@ -178,7 +185,7 @@ const ChartInternal: FC<ChartProps> = ({ symbols, dataMaxAge = 3600 }) => {
         }}
         tickFormat={(tick: string) =>
           typeof tick === "string"
-            ? tick.substring(longHorizon ? 0 : 6, longHorizon ? 7 : 10)
+            ? tick.substring(longHorizon ? 0 : 5, longHorizon ? 7 : 10)
             : ""
         }
         tickCount={4}
